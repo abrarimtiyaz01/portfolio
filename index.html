@@ -4,6 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Abrar Imtiyaz — Electronics &amp; Software</title>
+<meta name="description" content="Abrar Imtiyaz — Electronics &amp; Communication Engineering student specializing in Linux, Python, and applied machine learning. Portfolio, experience, and projects.">
+<meta name="keywords" content="Abrar Imtiyaz, Electronics Engineer, ECE, Python Developer, Linux, Machine Learning, Portfolio">
+<meta name="author" content="Abrar Imtiyaz">
+
+<!-- Open Graph / Facebook / LinkedIn -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Abrar Imtiyaz — Electronics &amp; Software">
+<meta property="og:description" content="Electronics &amp; Communication Engineering student who works comfortably on both sides of the breadboard — Linux, Python, and applied ML.">
+<meta property="og:image" content="social-preview.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Abrar Imtiyaz — Electronics &amp; Software">
+<meta name="twitter:description" content="Electronics &amp; Communication Engineering student who works comfortably on both sides of the breadboard — Linux, Python, and applied ML.">
+<meta name="twitter:image" content="social-preview.png">
+
+<!-- Favicon: inline SVG circuit-node mark, no external file needed -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2312140F'/%3E%3Cpath d='M4 10 H12 L14 13 H20 L22 10 H28' stroke='%23C97A3D' stroke-width='2' fill='none'/%3E%3Cpath d='M4 22 H10 L12 19 H20 L22 22 H28' stroke='%237C9A82' stroke-width='2' fill='none'/%3E%3Ccircle cx='12' cy='13' r='2' fill='%23E0A05E'/%3E%3Ccircle cx='20' cy='19' r='2' fill='%237C9A82'/%3E%3C/svg%3E">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -87,6 +106,18 @@
 
   nav, header, section, footer{ position: relative; z-index: 1; }
 
+  /* ---------- CURSOR SPOTLIGHT ---------- */
+  #spotlight{
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(201,122,61,0.06), transparent 40%);
+    transition: background 0.1s ease;
+  }
+  @media (hover: none){ #spotlight{ display: none; } }
+  @media (prefers-reduced-motion: reduce){ #spotlight{ display: none; } }
+
   body::before{
     content:"";
     position: fixed;
@@ -125,6 +156,48 @@
   @media (prefers-reduced-motion: reduce){
     *{ animation: none !important; transition: none !important; }
     .reveal{ opacity: 1 !important; transform: none !important; }
+  }
+
+  /* ---------- MAGNETIC HOVER ---------- */
+  .magnetic{
+    transition: transform 0.15s ease-out;
+    will-change: transform;
+  }
+
+  /* ---------- SCROLL-ZOOM FOCUS ---------- */
+  .zoomable{
+    transform-origin: center;
+    transition: opacity 0.7s ease, transform 0.2s ease-out;
+    will-change: transform;
+  }
+
+  /* ---------- SCROLL PING MARK ---------- */
+  .scroll-ping{
+    position: fixed;
+    width: 16px; height: 16px;
+    border: 2px solid var(--copper-bright);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0.9;
+    z-index: 90;
+    box-shadow: 0 0 12px rgba(224,160,94,0.5);
+    animation: pingOut 0.65s ease-out forwards;
+  }
+  .scroll-ping::after{
+    content:"";
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--copper-bright);
+    opacity: 0.8;
+  }
+  @keyframes pingOut{
+    to{ transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .scroll-ping{ display: none; }
+    .zoomable{ transform: none !important; transition: none !important; }
   }
 
   .wrap{
@@ -366,6 +439,55 @@
     .about-grid{ grid-template-columns: 1fr; }
   }
 
+  /* ---------- TERMINAL WIDGET ---------- */
+  .terminal-panel{
+    margin-top: 34px;
+    background: #0E100C;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  }
+  .terminal-header{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .terminal-header .dot{
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .terminal-header .dot.red{ background: #E0605A; }
+  .terminal-header .dot.yellow{ background: #E0B85E; }
+  .terminal-header .dot.green{ background: #7C9A82; }
+  .terminal-title{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-left: 8px;
+  }
+  .terminal-body{
+    padding: 18px 20px 22px;
+    font-family: var(--mono);
+    font-size: 13px;
+    min-height: 180px;
+  }
+  .term-line{ margin-bottom: 6px; white-space: pre-wrap; word-break: break-word; }
+  .term-prompt{ color: var(--sage); }
+  .term-cmd{ color: var(--text); }
+  .term-out{ color: var(--copper-bright); }
+  .term-cursor{
+    display: inline-block;
+    width: 7px; height: 14px;
+    background: var(--copper-bright);
+    vertical-align: middle;
+    animation: caret 0.8s steps(1) infinite;
+  }
+
   /* ---------- SKILLS ---------- */
   .skill-groups{
     display:grid;
@@ -398,6 +520,45 @@
     border-color: var(--copper);
     color: var(--copper-bright);
     box-shadow: 0 6px 16px rgba(201,122,61,0.2);
+  }
+
+  /* ---------- PROFICIENCY BARS ---------- */
+  .core-skills{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .bar-row{ display: grid; grid-template-columns: 140px 1fr 40px; align-items: center; gap: 14px; }
+  .bar-label{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text);
+  }
+  .bar-track{
+    height: 6px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bar-fill{
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--sage), var(--copper-bright));
+    box-shadow: 0 0 10px rgba(201,122,61,0.4);
+    transition: width 1.4s cubic-bezier(.2,.8,.2,1);
+  }
+  .in-view .bar-fill{ width: var(--pct); }
+  .bar-pct{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: right;
+  }
+  @media (max-width: 560px){
+    .bar-row{ grid-template-columns: 96px 1fr 34px; gap: 10px; }
   }
 
   /* ---------- TIMELINE (signature element) ---------- */
@@ -594,6 +755,7 @@
 </head>
 <body>
 
+<div id="spotlight"></div>
 <div id="scroll-progress"></div>
 
 <svg id="circuit-bg" viewBox="0 0 1200 2200" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -643,45 +805,74 @@
     <h1 class="name" id="hero-name">ABRAR<br><span>IMTIYAZ</span></h1>
     <p class="role-line" id="role-line"><span id="type-target"></span><span class="type-cursor">&nbsp;</span></p>
     <div class="hero-meta">
-      <div class="pin">📍 Pulwama, J&amp;K, India</div>
-      <div class="pin"><a href="mailto:abrarimtiyaz01@gmail.com">abrarimtiyaz01@gmail.com</a></div>
-      <div class="pin"><a href="tel:+917006190077">+91-7006190077</a></div>
-      <div class="pin"><a href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">linkedin.com/in/abrarimtiyaz01</a></div>
+      <div class="pin magnetic">📍 Pulwama, J&amp;K, India</div>
+      <div class="pin magnetic"><a href="mailto:abrarimtiyaz01@gmail.com">abrarimtiyaz01@gmail.com</a></div>
+      <div class="pin magnetic"><a href="tel:+917006190077">+91-7006190077</a></div>
+      <div class="pin magnetic"><a href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">linkedin.com/in/abrarimtiyaz01</a></div>
     </div>
   </div>
 </header>
 
 <section id="about">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head reveal zoomable">
       <span class="sec-tag">01</span>
       <span class="sec-title">About</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="about-grid reveal">
+    <div class="about-grid reveal zoomable">
       <div class="about-text">
         <p>I'm a <b>final-year B.Tech student in Electronics and Communication Engineering</b> at IUST Pulwama, graduating in 2026. My path so far has been deliberately hybrid: hardware fundamentals in the classroom, software fluency built through internships and self-study.</p>
         <p>Internships at <b>IIT Bombay</b> and <b>NIT Srinagar</b> gave me real hands-on time in Linux environments — automating tasks with BASH, version-controlling with Git, and later applying Python to basic machine learning workflows: preprocessing, exploration, and model evaluation.</p>
         <p>I pick up new tools quickly, work well independently on the command line, and I'm looking for an <b>entry-level role</b> where I can put these skills to work while continuing to grow.</p>
       </div>
-      <div class="focus-list reveal stagger">
+      <div class="focus-list reveal stagger zoomable">
         <div class="focus-item"><b>Software Development</b>Clean, reliable Python — built with problem-solving first.</div>
         <div class="focus-item"><b>Linux &amp; Networking</b>Command-line fluency, shell scripting, system administration basics.</div>
         <div class="focus-item"><b>Web &amp; Security</b>Exploring secure application design and common vulnerabilities.</div>
         <div class="focus-item"><b>Applied Machine Learning</b>Data preprocessing, model building, and evaluation.</div>
       </div>
     </div>
+    <div class="terminal-panel reveal zoomable">
+      <div class="terminal-header">
+        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+        <span class="terminal-title">abrar@portfolio:~</span>
+      </div>
+      <div class="terminal-body" id="terminal-body"></div>
+    </div>
   </div>
 </section>
 
 <section id="skills">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head reveal zoomable">
       <span class="sec-tag">02</span>
       <span class="sec-title">Skills</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="skill-groups reveal stagger">
+    <div class="core-skills reveal zoomable">
+      <div class="bar-row">
+        <span class="bar-label">Python</span>
+        <span class="bar-track"><span class="bar-fill" style="--pct:85%"></span></span>
+        <span class="bar-pct">85%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Linux / BASH</span>
+        <span class="bar-track"><span class="bar-fill" style="--pct:80%"></span></span>
+        <span class="bar-pct">80%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Circuit Design</span>
+        <span class="bar-track"><span class="bar-fill" style="--pct:75%"></span></span>
+        <span class="bar-pct">75%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Machine Learning</span>
+        <span class="bar-track"><span class="bar-fill" style="--pct:60%"></span></span>
+        <span class="bar-pct">60%</span>
+      </div>
+    </div>
+    <div class="skill-groups reveal stagger zoomable">
       <div>
         <div class="skill-group-label">Programming</div>
         <div class="chips">
@@ -724,12 +915,12 @@
 
 <section id="experience">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head reveal zoomable">
       <span class="sec-tag">03</span>
       <span class="sec-title">Experience &amp; Education</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="trace reveal">
+    <div class="trace reveal zoomable">
       <div class="trace-item">
         <div class="via"></div>
         <div class="trace-date">JAN – FEB 2025</div>
@@ -764,12 +955,12 @@
 
 <section id="projects">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head reveal zoomable">
       <span class="sec-tag">04</span>
       <span class="sec-title">Projects</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="project-card reveal">
+    <div class="project-card reveal zoomable">
       <div class="project-title">Power Supply cum Mobile Charger</div>
       <p class="project-desc">Designed a regulated DC output suitable for mobile charging, with attention to basic safety and stability — a practical circuit-design project bridging electronics theory and a real, usable device.</p>
     </div>
@@ -778,12 +969,12 @@
 
 <section id="certs">
   <div class="wrap">
-    <div class="sec-head reveal">
+    <div class="sec-head reveal zoomable">
       <span class="sec-tag">05</span>
       <span class="sec-title">Certifications &amp; Workshops</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="cert-cols reveal">
+    <div class="cert-cols reveal zoomable">
       <div>
         <div class="skill-group-label">Certifications</div>
         <ul class="cert-list">
@@ -827,9 +1018,9 @@
     <div class="footer-prompt">$ contact --open</div>
     <div class="footer-name">Let's build something.</div>
     <div class="footer-links">
-      <a href="mailto:abrarimtiyaz01@gmail.com">Email</a>
-      <a href="tel:+917006190077">Call</a>
-      <a href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="magnetic" href="mailto:abrarimtiyaz01@gmail.com">Email</a>
+      <a class="magnetic" href="tel:+917006190077">Call</a>
+      <a class="magnetic" href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">LinkedIn</a>
     </div>
     <div class="fine">Abrar Imtiyaz · Pulwama, J&amp;K, India</div>
   </div>
@@ -926,6 +1117,157 @@
   }
   document.addEventListener('scroll', updateActiveNav, { passive: true });
   updateActiveNav();
+
+  // ---- Cursor spotlight ----
+  if (!reduceMotion && matchMedia('(hover: hover)').matches) {
+    document.addEventListener('mousemove', function(e){
+      document.documentElement.style.setProperty('--mx', e.clientX + 'px');
+      document.documentElement.style.setProperty('--my', e.clientY + 'px');
+    }, { passive: true });
+  }
+
+  // ---- Magnetic hover ----
+  if (!reduceMotion && matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('.magnetic').forEach(function(el){
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var x = e.clientX - r.left - r.width / 2;
+        var y = e.clientY - r.top - r.height / 2;
+        el.style.transform = 'translate(' + (x * 0.25) + 'px,' + (y * 0.35) + 'px)';
+      });
+      el.addEventListener('mouseleave', function(){
+        el.style.transform = 'translate(0,0)';
+      });
+    });
+  }
+
+  // ---- Scroll-zoom focus: elements near viewport center scale up slightly ----
+  var zoomEls = document.querySelectorAll('.zoomable');
+  if (!reduceMotion && zoomEls.length) {
+    var ticking = false;
+    function updateZoom(){
+      var centerY = window.innerHeight / 2;
+      var maxDist = window.innerHeight * 0.75;
+      zoomEls.forEach(function(el){
+        if (!el.classList.contains('in-view')) return; // let the reveal slide-in finish untouched
+        var r = el.getBoundingClientRect();
+        var elCenter = r.top + r.height / 2;
+        var dist = Math.abs(elCenter - centerY);
+        var t = Math.min(dist / maxDist, 1); // 0 = centered, 1 = far
+        var scale = 1.035 - (t * 0.075); // ranges ~1.035 (centered) to 0.96 (far)
+        el.style.transform = 'scale(' + scale.toFixed(3) + ')';
+      });
+      ticking = false;
+    }
+    function requestZoomUpdate(){
+      if (!ticking){
+        window.requestAnimationFrame(updateZoom);
+        ticking = true;
+      }
+    }
+    document.addEventListener('scroll', requestZoomUpdate, { passive: true });
+    window.addEventListener('resize', requestZoomUpdate);
+    requestZoomUpdate();
+  }
+
+  // ---- Wheel "mark and zoom" ping at cursor position ----
+  if (!reduceMotion) {
+    var lastMouseX = window.innerWidth / 2;
+    var lastMouseY = window.innerHeight / 2;
+    document.addEventListener('mousemove', function(e){
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+    }, { passive: true });
+
+    var lastPingTime = 0;
+    document.addEventListener('wheel', function(){
+      var now = Date.now();
+      if (now - lastPingTime < 90) return; // throttle so pings don't flood
+      lastPingTime = now;
+      var ping = document.createElement('div');
+      ping.className = 'scroll-ping';
+      ping.style.left = lastMouseX + 'px';
+      ping.style.top = lastMouseY + 'px';
+      document.body.appendChild(ping);
+      setTimeout(function(){ ping.remove(); }, 700);
+    }, { passive: true });
+  }
+
+  // ---- Terminal typing sequence ----
+  var termBody = document.getElementById('terminal-body');
+  if (termBody) {
+    var sequence = [
+      { cmd: 'whoami', out: 'abrar_imtiyaz — ECE student, Linux & Python' },
+      { cmd: 'cat focus.txt', out: 'hardware + software · Linux · Python · applied ML' },
+      { cmd: 'ls skills/', out: 'python.py  linux.sh  circuits.sch  ml_models/' },
+      { cmd: 'echo $STATUS', out: 'open_to_entry_level_roles' }
+    ];
+
+    if (reduceMotion) {
+      sequence.forEach(function(step){
+        var l1 = document.createElement('div');
+        l1.className = 'term-line';
+        l1.innerHTML = '<span class="term-prompt">$</span> <span class="term-cmd">' + step.cmd + '</span>';
+        var l2 = document.createElement('div');
+        l2.className = 'term-line term-out';
+        l2.textContent = step.out;
+        termBody.appendChild(l1);
+        termBody.appendChild(l2);
+      });
+    } else {
+      var stepIndex = 0;
+      function runStep(){
+        if (stepIndex >= sequence.length) {
+          var finalPrompt = document.createElement('div');
+          finalPrompt.className = 'term-line';
+          finalPrompt.innerHTML = '<span class="term-prompt">$</span> <span class="term-cursor"></span>';
+          termBody.appendChild(finalPrompt);
+          return;
+        }
+        var step = sequence[stepIndex];
+        var cmdLine = document.createElement('div');
+        cmdLine.className = 'term-line';
+        var promptSpan = document.createElement('span');
+        promptSpan.className = 'term-prompt';
+        promptSpan.textContent = '$ ';
+        var cmdSpan = document.createElement('span');
+        cmdSpan.className = 'term-cmd';
+        cmdLine.appendChild(promptSpan);
+        cmdLine.appendChild(cmdSpan);
+        termBody.appendChild(cmdLine);
+
+        var charIndex = 0;
+        function typeChar(){
+          if (charIndex <= step.cmd.length){
+            cmdSpan.textContent = step.cmd.slice(0, charIndex);
+            charIndex++;
+            setTimeout(typeChar, 35);
+          } else {
+            setTimeout(function(){
+              var outLine = document.createElement('div');
+              outLine.className = 'term-line term-out';
+              outLine.textContent = step.out;
+              termBody.appendChild(outLine);
+              stepIndex++;
+              setTimeout(runStep, 500);
+            }, 250);
+          }
+        }
+        typeChar();
+      }
+
+      // Start the sequence once the terminal panel scrolls into view
+      var termObserver = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting){
+            setTimeout(runStep, 400);
+            termObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+      termObserver.observe(termBody);
+    }
+  }
 })();
 </script>
 
