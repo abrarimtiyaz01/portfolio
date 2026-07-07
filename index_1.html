@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abrar Imtiyaz — Electronics &amp; Software</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12140F;
+    --panel: #1A1D15;
+    --panel-2: #202318;
+    --copper: #C97A3D;
+    --copper-bright: #E0A05E;
+    --sage: #7C9A82;
+    --text: #ECEAE0;
+    --muted: #8D9086;
+    --line: #33362A;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  a{ color: var(--copper-bright); text-decoration: none; }
+  a:hover{ text-decoration: underline; }
+
+  :focus-visible{
+    outline: 2px solid var(--sage);
+    outline-offset: 3px;
+  }
+
+  ::selection{ background: var(--copper); color: #12140F; }
+
+  /* ---------- SCROLL PROGRESS ---------- */
+  #scroll-progress{
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--copper), var(--sage), var(--copper-bright));
+    background-size: 200% 100%;
+    z-index: 100;
+    box-shadow: 0 0 10px var(--copper);
+    animation: gradientshift 4s linear infinite;
+  }
+  @keyframes gradientshift{
+    0%{ background-position: 0% 0; } 100%{ background-position: 200% 0; }
+  }
+
+  /* ---------- ANIMATED CIRCUIT BACKGROUND ---------- */
+  #circuit-bg{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    width: 100%;
+    height: 100%;
+  }
+  #circuit-bg path{
+    fill: none;
+    stroke-width: 1.4;
+    stroke-dasharray: 6 10;
+    animation: dashflow 5s linear infinite;
+  }
+  #circuit-bg circle.node{
+    animation: nodepulse 2.6s ease-in-out infinite;
+  }
+  @keyframes dashflow{ to{ stroke-dashoffset: -160; } }
+  @keyframes nodepulse{
+    0%,100%{ opacity: 0.35; } 50%{ opacity: 1; }
+  }
+
+  nav, header, section, footer{ position: relative; z-index: 1; }
+
+  body::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(124,154,130,0.08) 1px, transparent 0);
+    background-size: 28px 28px;
+  }
+
+  /* ---------- SCROLL REVEAL ---------- */
+  .reveal{
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.in-view{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .stagger.in-view > *{
+    animation: staggerIn 0.6s ease backwards;
+  }
+  .stagger.in-view > *:nth-child(1){ animation-delay: 0.05s; }
+  .stagger.in-view > *:nth-child(2){ animation-delay: 0.12s; }
+  .stagger.in-view > *:nth-child(3){ animation-delay: 0.19s; }
+  .stagger.in-view > *:nth-child(4){ animation-delay: 0.26s; }
+  .stagger.in-view > *:nth-child(5){ animation-delay: 0.33s; }
+  .stagger.in-view > *:nth-child(6){ animation-delay: 0.40s; }
+  @keyframes staggerIn{
+    from{ opacity: 0; transform: translateY(16px) scale(0.97); }
+    to{ opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+    .reveal{ opacity: 1 !important; transform: none !important; }
+  }
+
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(18,20,15,0.85);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .nav-id{
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--sage);
+  }
+  .nav-links{
+    display:flex;
+    gap: 22px;
+    list-style:none;
+  }
+  .nav-links a{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    position: relative;
+    padding-bottom: 4px;
+    transition: color 0.25s ease;
+  }
+  .nav-links a::after{
+    content:"";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0%;
+    height: 1px;
+    background: var(--copper-bright);
+    transition: width 0.25s ease;
+  }
+  .nav-links a:hover, .nav-links a.active{ color: var(--copper-bright); text-decoration:none; }
+  .nav-links a:hover::after, .nav-links a.active::after{ width: 100%; }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding: 90px 0 70px;
+    position: relative;
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--sage);
+    letter-spacing: 0.12em;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .eyebrow::before{
+    content:"";
+    width: 8px; height: 8px;
+    background: var(--copper);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--copper);
+    animation: blink 2.4s infinite;
+  }
+  @keyframes blink{
+    0%,100%{ opacity:1; } 50%{ opacity: 0.35; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .eyebrow::before{ animation: none; }
+  }
+
+  h1.name{
+    font-family: var(--mono);
+    font-weight: 800;
+    font-size: clamp(38px, 7vw, 74px);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    overflow: hidden;
+  }
+  h1.name .letter{
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.5em);
+    animation: letterUp 0.65s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  @keyframes letterUp{
+    to{ opacity: 1; transform: translateY(0); }
+  }
+  h1.name span{
+    color: var(--copper-bright);
+    text-shadow: 0 0 24px rgba(224,160,94,0.35);
+    animation: nameGlow 4s ease-in-out infinite;
+  }
+  @keyframes nameGlow{
+    0%,100%{ text-shadow: 0 0 24px rgba(224,160,94,0.35); }
+    50%{ text-shadow: 0 0 40px rgba(224,160,94,0.6); }
+  }
+
+  .role-line{
+    margin-top: 22px;
+    font-size: clamp(16px, 2.4vw, 20px);
+    color: var(--muted);
+    max-width: 640px;
+    min-height: 1.6em;
+  }
+  .role-line b{ color: var(--text); font-weight: 600; }
+  .type-cursor{
+    display: inline-block;
+    width: 2px;
+    background: var(--copper-bright);
+    margin-left: 2px;
+    animation: caret 0.8s steps(1) infinite;
+  }
+  @keyframes caret{ 50%{ opacity: 0; } }
+
+  .hero-meta{
+    margin-top: 34px;
+    display:flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .pin{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--sage);
+    border: 1px solid var(--line);
+    background: var(--panel);
+    padding: 7px 12px;
+    border-radius: 3px;
+    letter-spacing: 0.03em;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    opacity: 0;
+    animation: staggerIn 0.6s ease forwards;
+  }
+  .hero-meta .pin:nth-child(1){ animation-delay: 1.1s; }
+  .hero-meta .pin:nth-child(2){ animation-delay: 1.2s; }
+  .hero-meta .pin:nth-child(3){ animation-delay: 1.3s; }
+  .hero-meta .pin:nth-child(4){ animation-delay: 1.4s; }
+  .pin:hover{
+    transform: translateY(-3px);
+    border-color: var(--copper);
+    box-shadow: 0 6px 18px rgba(201,122,61,0.18);
+  }
+  .pin a{ color: inherit; }
+  .pin a:hover{ color: var(--copper-bright); }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{ padding: 64px 0; border-top: 1px solid var(--line); }
+
+  .sec-head{
+    display:flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .sec-tag{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--copper);
+    letter-spacing: 0.1em;
+  }
+  .sec-title{
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .sec-rule{
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .sec-rule::after{
+    content:"";
+    position: absolute;
+    top:0; left:-40%;
+    width: 40%; height:100%;
+    background: linear-gradient(90deg, transparent, var(--copper), transparent);
+    opacity: 0;
+  }
+  .reveal.in-view .sec-rule::after{
+    animation: rulesweep 1.4s ease forwards 0.15s;
+  }
+  @keyframes rulesweep{
+    0%{ left: -40%; opacity: 0.9; }
+    100%{ left: 100%; opacity: 0; }
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 40px;
+  }
+  .about-text p{ color: var(--muted); margin-bottom: 14px; }
+  .about-text p b{ color: var(--text); font-weight: 600; }
+
+  .focus-list{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
+  .focus-item{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--sage);
+    padding: 12px 14px;
+    font-size: 13.5px;
+    color: var(--muted);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-left-color 0.25s ease;
+  }
+  .focus-item:hover{
+    transform: translateX(4px);
+    border-left-color: var(--copper);
+    box-shadow: -2px 4px 16px rgba(124,154,130,0.12);
+  }
+  .focus-item b{ color: var(--text); display:block; font-family: var(--mono); font-size: 12.5px; letter-spacing:0.03em; margin-bottom:3px; }
+
+  @media (max-width: 760px){
+    .about-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skill-groups{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px 30px;
+  }
+  @media (max-width: 700px){ .skill-groups{ grid-template-columns: 1fr; } }
+
+  .skill-group-label{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 10px;
+  }
+  .chips{ display:flex; flex-wrap:wrap; gap: 8px; }
+  .chip{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    padding: 6px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    color: var(--text);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+  }
+  .chip:hover{
+    transform: translateY(-3px) scale(1.04);
+    border-color: var(--copper);
+    color: var(--copper-bright);
+    box-shadow: 0 6px 16px rgba(201,122,61,0.2);
+  }
+
+  /* ---------- TIMELINE (signature element) ---------- */
+  .trace{
+    position: relative;
+    padding-left: 34px;
+  }
+  .trace::before{
+    content:"";
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--copper), var(--sage));
+    opacity: 0.5;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 1.4s cubic-bezier(.2,.7,.2,1);
+  }
+  .trace.in-view::before{ transform: scaleY(1); }
+  .trace-item{
+    position: relative;
+    padding-bottom: 40px;
+    padding-right: 10px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+  }
+  .trace-item:hover{ background: rgba(124,154,130,0.05); }
+  .trace-item:last-child{ padding-bottom: 0; }
+  .via{
+    position: absolute;
+    left: -34px;
+    top: 4px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--copper);
+    box-shadow: 0 0 0 rgba(201,122,61,0.4);
+    animation: viaPulse 2.6s ease-in-out infinite;
+  }
+  .via::after{
+    content:"";
+    position:absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--copper);
+  }
+  @keyframes viaPulse{
+    0%,100%{ box-shadow: 0 0 0 0 rgba(201,122,61,0.35); }
+    50%{ box-shadow: 0 0 0 6px rgba(201,122,61,0); }
+  }
+  .trace-date{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--copper-bright);
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .trace-title{
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .trace-org{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--sage);
+    margin-bottom: 10px;
+  }
+  .trace-item ul{
+    list-style: none;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .trace-item li{ position: relative; padding-left: 16px; margin-bottom: 6px; }
+  .trace-item li::before{
+    content:"›";
+    position:absolute; left:0; color: var(--copper);
+  }
+
+  /* ---------- PROJECT ---------- */
+  .project-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 26px;
+    border-radius: 4px;
+    position: relative;
+    overflow:hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .project-card:hover{
+    transform: translateY(-6px);
+    border-color: var(--copper);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+  }
+  .project-card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--copper), var(--sage));
+  }
+  .project-card::after{
+    content:"";
+    position: absolute;
+    top: 0; left: -60%;
+    width: 60%; height: 100%;
+    background: linear-gradient(115deg, transparent, rgba(236,234,224,0.06), transparent);
+    transition: left 0.7s ease;
+  }
+  .project-card:hover::after{ left: 130%; }
+  .project-title{
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .project-desc{ color: var(--muted); font-size: 14.5px; }
+
+  /* ---------- CERTS / WORKSHOPS ---------- */
+  .cert-cols{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+  @media (max-width: 700px){ .cert-cols{ grid-template-columns: 1fr; } }
+  .cert-list{ list-style:none; }
+  .cert-list li{
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    transition: transform 0.25s ease, padding-left 0.25s ease;
+  }
+  .cert-list li:hover{
+    transform: translateX(4px);
+    padding-left: 6px;
+  }
+  .cert-list li:last-child{ border-bottom:none; }
+  .cert-name{ font-weight: 600; color: var(--text); font-size: 14.5px; }
+  .cert-meta{ font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  footer{
+    padding: 70px 0 50px;
+    border-top: 1px solid var(--line);
+    text-align:center;
+  }
+  .footer-prompt{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--sage);
+    margin-bottom: 18px;
+  }
+  .footer-name{
+    font-family: var(--mono);
+    font-weight: 800;
+    font-size: clamp(28px, 5vw, 44px);
+    color: var(--text);
+    margin-bottom: 22px;
+  }
+  .footer-links{
+    display:flex;
+    justify-content:center;
+    gap: 20px;
+    flex-wrap:wrap;
+    margin-bottom: 30px;
+  }
+  .footer-links a{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--copper-bright);
+    border: 1px solid var(--line);
+    padding: 9px 16px;
+    border-radius: 3px;
+    display: inline-block;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .footer-links a:hover{
+    background: var(--panel-2);
+    text-decoration:none;
+    transform: translateY(-4px);
+    border-color: var(--copper);
+    box-shadow: 0 10px 26px rgba(201,122,61,0.25);
+  }
+  .footer-name{ animation: nameGlow 4s ease-in-out infinite; }
+  .fine{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+
+<svg id="circuit-bg" viewBox="0 0 1200 2200" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="traceGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C97A3D"/>
+      <stop offset="100%" stop-color="#7C9A82"/>
+    </linearGradient>
+  </defs>
+  <path d="M -50 120 L 200 120 L 260 180 L 600 180 L 660 120 L 1200 120" stroke="url(#traceGrad)"/>
+  <path d="M -50 420 L 150 420 L 210 480 L 500 480 L 560 540 L 1200 540" stroke="url(#traceGrad)"/>
+  <path d="M -50 800 L 300 800 L 340 740 L 700 740 L 760 800 L 1200 800" stroke="url(#traceGrad)"/>
+  <path d="M -50 1200 L 250 1200 L 300 1140 L 650 1140 L 690 1200 L 1200 1200" stroke="url(#traceGrad)"/>
+  <path d="M -50 1600 L 200 1600 L 260 1660 L 620 1660 L 670 1600 L 1200 1600" stroke="url(#traceGrad)"/>
+  <path d="M -50 2000 L 350 2000 L 400 1940 L 750 1940 L 800 2000 L 1200 2000" stroke="url(#traceGrad)"/>
+  <circle class="node" cx="200" cy="120" r="3" fill="#E0A05E"/>
+  <circle class="node" cx="660" cy="120" r="3" fill="#7C9A82"/>
+  <circle class="node" cx="210" cy="480" r="3" fill="#E0A05E"/>
+  <circle class="node" cx="560" cy="540" r="3" fill="#7C9A82"/>
+  <circle class="node" cx="340" cy="740" r="3" fill="#E0A05E"/>
+  <circle class="node" cx="760" cy="800" r="3" fill="#7C9A82"/>
+  <circle class="node" cx="300" cy="1140" r="3" fill="#E0A05E"/>
+  <circle class="node" cx="690" cy="1200" r="3" fill="#7C9A82"/>
+  <circle class="node" cx="260" cy="1660" r="3" fill="#E0A05E"/>
+  <circle class="node" cx="670" cy="1600" r="3" fill="#7C9A82"/>
+  <circle class="node" cx="400" cy="1940" r="3" fill="#E0A05E"/>
+  <circle class="node" cx="800" cy="2000" r="3" fill="#7C9A82"/>
+</svg>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-id">AI // portfolio.v1</div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#certs">Certs</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">STATUS: OPEN TO ENTRY-LEVEL ROLES</div>
+    <h1 class="name" id="hero-name">ABRAR<br><span>IMTIYAZ</span></h1>
+    <p class="role-line" id="role-line"><span id="type-target"></span><span class="type-cursor">&nbsp;</span></p>
+    <div class="hero-meta">
+      <div class="pin">📍 Pulwama, J&amp;K, India</div>
+      <div class="pin"><a href="mailto:abrarimtiyaz01@gmail.com">abrarimtiyaz01@gmail.com</a></div>
+      <div class="pin"><a href="tel:+917006190077">+91-7006190077</a></div>
+      <div class="pin"><a href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">linkedin.com/in/abrarimtiyaz01</a></div>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">01</span>
+      <span class="sec-title">About</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <p>I'm a <b>final-year B.Tech student in Electronics and Communication Engineering</b> at IUST Pulwama, graduating in 2026. My path so far has been deliberately hybrid: hardware fundamentals in the classroom, software fluency built through internships and self-study.</p>
+        <p>Internships at <b>IIT Bombay</b> and <b>NIT Srinagar</b> gave me real hands-on time in Linux environments — automating tasks with BASH, version-controlling with Git, and later applying Python to basic machine learning workflows: preprocessing, exploration, and model evaluation.</p>
+        <p>I pick up new tools quickly, work well independently on the command line, and I'm looking for an <b>entry-level role</b> where I can put these skills to work while continuing to grow.</p>
+      </div>
+      <div class="focus-list reveal stagger">
+        <div class="focus-item"><b>Software Development</b>Clean, reliable Python — built with problem-solving first.</div>
+        <div class="focus-item"><b>Linux &amp; Networking</b>Command-line fluency, shell scripting, system administration basics.</div>
+        <div class="focus-item"><b>Web &amp; Security</b>Exploring secure application design and common vulnerabilities.</div>
+        <div class="focus-item"><b>Applied Machine Learning</b>Data preprocessing, model building, and evaluation.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">02</span>
+      <span class="sec-title">Skills</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="skill-groups reveal stagger">
+      <div>
+        <div class="skill-group-label">Programming</div>
+        <div class="chips">
+          <span class="chip">Python</span><span class="chip">C</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Linux &amp; Scripting</div>
+        <div class="chips">
+          <span class="chip">Linux CLI</span><span class="chip">BASH</span><span class="chip">Regex</span><span class="chip">SED</span><span class="chip">AWK</span><span class="chip">SSH</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Tools &amp; Platforms</div>
+        <div class="chips">
+          <span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">KiCad</span><span class="chip">MATLAB</span><span class="chip">Multisim</span><span class="chip">MS Office</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Electronics &amp; Hardware</div>
+        <div class="chips">
+          <span class="chip">Circuit Design</span><span class="chip">Soldering</span><span class="chip">Power Supply Design</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Python Applications</div>
+        <div class="chips">
+          <span class="chip">Sockets / Networking</span><span class="chip">Database Interaction</span><span class="chip">Web Scraping</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Professional</div>
+        <div class="chips">
+          <span class="chip">Communication</span><span class="chip">Analytical Thinking</span><span class="chip">Team Collaboration</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">03</span>
+      <span class="sec-title">Experience &amp; Education</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="trace reveal">
+      <div class="trace-item">
+        <div class="via"></div>
+        <div class="trace-date">JAN – FEB 2025</div>
+        <div class="trace-title">Winter Intern (Internship cum Training)</div>
+        <div class="trace-org">National Institute of Technology, Srinagar</div>
+        <ul>
+          <li>Acquired hands-on experience in Machine Learning and AI fundamentals, including data preprocessing and exploratory analysis.</li>
+          <li>Implemented basic ML models using Python and assisted in building end-to-end ML workflows.</li>
+          <li>Contributed to interpreting model outputs and evaluating performance.</li>
+        </ul>
+      </div>
+      <div class="trace-item">
+        <div class="via"></div>
+        <div class="trace-date">JUN 2024</div>
+        <div class="trace-title">Summer Intern</div>
+        <div class="trace-org">Indian Institute of Technology, Bombay</div>
+        <ul>
+          <li>Worked extensively in a Linux-based environment, automating routine tasks using BASH scripting.</li>
+          <li>Applied Python for scripting and data handling, and used Git for version control.</li>
+          <li>Strengthened command-line proficiency while supporting day-to-day technical operations.</li>
+        </ul>
+      </div>
+      <div class="trace-item">
+        <div class="via"></div>
+        <div class="trace-date">2022 – 2026</div>
+        <div class="trace-title">B.Tech, Electronics &amp; Communication Engineering</div>
+        <div class="trace-org">Islamic University of Science and Technology (IUST), Pulwama</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">04</span>
+      <span class="sec-title">Projects</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-title">Power Supply cum Mobile Charger</div>
+      <p class="project-desc">Designed a regulated DC output suitable for mobile charging, with attention to basic safety and stability — a practical circuit-design project bridging electronics theory and a real, usable device.</p>
+    </div>
+  </div>
+</section>
+
+<section id="certs">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-tag">05</span>
+      <span class="sec-title">Certifications &amp; Workshops</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="cert-cols reveal">
+      <div>
+        <div class="skill-group-label">Certifications</div>
+        <ul class="cert-list">
+          <li>
+            <div class="cert-name">e-Yantra Online Software Foundation Course</div>
+            <div class="cert-meta">IIT Bombay · Jul 2024 · Linux, Shell Scripting, Regex, SED, AWK</div>
+          </li>
+          <li>
+            <div class="cert-name">Python Fundamentals</div>
+            <div class="cert-meta">DIGISAKSHAM · Sep 2024 · Python Programming, Core Concepts</div>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <div class="skill-group-label">Workshops &amp; Webinars</div>
+        <ul class="cert-list">
+          <li>
+            <div class="cert-name">One-Day 3D Modelling &amp; Printing Workshop</div>
+            <div class="cert-meta">CIED–IUST Foundation · Jun 2025</div>
+          </li>
+          <li>
+            <div class="cert-name">Mind Over Matter</div>
+            <div class="cert-meta">NIT Srinagar · 21–22 Nov 2024</div>
+          </li>
+          <li>
+            <div class="cert-name">AI &amp; ML in Real Life</div>
+            <div class="cert-meta">GUVI · 27 Dec 2024</div>
+          </li>
+          <li>
+            <div class="cert-name">Master the Art of Data Visualization</div>
+            <div class="cert-meta">GUVI · 26 Dec 2024</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="footer-prompt">$ contact --open</div>
+    <div class="footer-name">Let's build something.</div>
+    <div class="footer-links">
+      <a href="mailto:abrarimtiyaz01@gmail.com">Email</a>
+      <a href="tel:+917006190077">Call</a>
+      <a href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <div class="fine">Abrar Imtiyaz · Pulwama, J&amp;K, India</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- Split hero name into animated letters ----
+  var nameEl = document.getElementById('hero-name');
+  if (nameEl && !reduceMotion) {
+    var walker = function(node){
+      Array.from(node.childNodes).forEach(function(child){
+        if (child.nodeType === 3) { // text node
+          var frag = document.createDocumentFragment();
+          child.textContent.split('').forEach(function(ch, i){
+            var span = document.createElement('span');
+            span.className = 'letter';
+            span.style.animationDelay = (i * 0.045) + 's';
+            span.textContent = ch === ' ' ? '\u00A0' : ch;
+            frag.appendChild(span);
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1) {
+          walker(child);
+        }
+      });
+    };
+    walker(nameEl);
+  }
+
+  // ---- Typewriter role line ----
+  var typeTarget = document.getElementById('type-target');
+  var fullText = "Final-year Electronics & Communication Engineering student who works comfortably on both sides of the breadboard — from soldering a power supply to scripting a Linux workflow to training a basic ML model.";
+  if (typeTarget) {
+    if (reduceMotion) {
+      typeTarget.textContent = fullText;
+    } else {
+      var i = 0;
+      var speed = 14;
+      function type(){
+        if (i <= fullText.length){
+          typeTarget.textContent = fullText.slice(0, i);
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+      setTimeout(type, 900);
+    }
+  }
+
+  // ---- Scroll reveal ----
+  var revealEls = document.querySelectorAll('.reveal');
+  var traceEls = document.querySelectorAll('.trace');
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(function(el){ obs.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in-view'); });
+  }
+
+  // ---- Scroll progress bar ----
+  var progress = document.getElementById('scroll-progress');
+  function updateProgress(){
+    var h = document.documentElement;
+    var scrolled = h.scrollTop;
+    var height = h.scrollHeight - h.clientHeight;
+    var pct = height > 0 ? (scrolled / height) * 100 : 0;
+    if (progress) progress.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // ---- Active nav link on scroll ----
+  var sections = document.querySelectorAll('section[id], footer[id]');
+  var navLinks = document.querySelectorAll('.nav-links a');
+  function updateActiveNav(){
+    var scrollPos = window.scrollY + 140;
+    var currentId = null;
+    sections.forEach(function(sec){
+      if (sec.offsetTop <= scrollPos) currentId = sec.id;
+    });
+    navLinks.forEach(function(link){
+      link.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
+    });
+  }
+  document.addEventListener('scroll', updateActiveNav, { passive: true });
+  updateActiveNav();
+})();
+</script>
+
+</body>
+</html>
