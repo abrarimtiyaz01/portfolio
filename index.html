@@ -721,6 +721,80 @@
     color: var(--text);
     margin-bottom: 22px;
   }
+
+  /* ---------- CONTACT FORM ---------- */
+  .contact-form{
+    max-width: 460px;
+    margin: 0 auto 36px;
+    text-align: left;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 26px;
+    position: relative;
+  }
+  .contact-form::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height: 3px;
+    border-radius: 6px 6px 0 0;
+    background: linear-gradient(90deg, var(--copper), var(--sage));
+  }
+  .form-row{ margin-bottom: 16px; }
+  .form-row label{
+    display: block;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 6px;
+  }
+  .form-row input,
+  .form-row textarea{
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .form-row input:focus,
+  .form-row textarea:focus{
+    outline: none;
+    border-color: var(--copper);
+    box-shadow: 0 0 0 3px rgba(201,122,61,0.15);
+  }
+  .form-submit{
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    color: var(--bg);
+    background: var(--copper-bright);
+    border: none;
+    padding: 11px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .form-submit:hover{
+    background: var(--copper);
+    box-shadow: 0 10px 26px rgba(201,122,61,0.3);
+  }
+  .form-hint{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 12px;
+    text-align: center;
+  }
+
   .footer-links{
     display:flex;
     justify-content:center;
@@ -807,7 +881,7 @@
     <div class="hero-meta">
       <div class="pin magnetic">📍 Pulwama, J&amp;K, India</div>
       <div class="pin magnetic"><a href="mailto:abrarimtiyaz01@gmail.com">abrarimtiyaz01@gmail.com</a></div>
-      <div class="pin magnetic"><a href="tel:+917006190077">+91-7006190077</a></div>
+      <div class="pin magnetic"><a href="#contact">Send a message →</a></div>
       <div class="pin magnetic"><a href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">linkedin.com/in/abrarimtiyaz01</a></div>
     </div>
   </div>
@@ -1017,9 +1091,26 @@
   <div class="wrap">
     <div class="footer-prompt">$ contact --open</div>
     <div class="footer-name">Let's build something.</div>
+
+    <form class="contact-form reveal zoomable" id="contact-form">
+      <div class="form-row">
+        <label for="cf-name">Name</label>
+        <input type="text" id="cf-name" name="name" required placeholder="Your name">
+      </div>
+      <div class="form-row">
+        <label for="cf-email">Email</label>
+        <input type="email" id="cf-email" name="email" required placeholder="you@example.com">
+      </div>
+      <div class="form-row">
+        <label for="cf-message">Message</label>
+        <textarea id="cf-message" name="message" required rows="4" placeholder="What would you like to talk about?"></textarea>
+      </div>
+      <button type="submit" class="form-submit magnetic">Send message →</button>
+      <p class="form-hint" id="form-hint">Opens your email app with this message ready to send — I never see your details until you hit send.</p>
+    </form>
+
     <div class="footer-links">
       <a class="magnetic" href="mailto:abrarimtiyaz01@gmail.com">Email</a>
-      <a class="magnetic" href="tel:+917006190077">Call</a>
       <a class="magnetic" href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">LinkedIn</a>
     </div>
     <div class="fine">Abrar Imtiyaz · Pulwama, J&amp;K, India</div>
@@ -1191,6 +1282,22 @@
       document.body.appendChild(ping);
       setTimeout(function(){ ping.remove(); }, 700);
     }, { passive: true });
+  }
+
+  // ---- Contact form: builds a pre-filled mailto (no backend, no phone number exposed) ----
+  var contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = document.getElementById('cf-name').value.trim();
+      var email = document.getElementById('cf-email').value.trim();
+      var message = document.getElementById('cf-message').value.trim();
+      var subject = encodeURIComponent('Portfolio contact from ' + name);
+      var body = encodeURIComponent(message + '\n\n— ' + name + ' (' + email + ')');
+      window.location.href = 'mailto:abrarimtiyaz01@gmail.com?subject=' + subject + '&body=' + body;
+      var hint = document.getElementById('form-hint');
+      if (hint) hint.textContent = 'Your email app should now be open with the message ready — hit send there.';
+    });
   }
 
   // ---- Terminal typing sequence ----
