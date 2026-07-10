@@ -914,6 +914,12 @@
     color: var(--sage);
     margin-bottom: 6px;
   }
+  .form-optional{
+    color: var(--muted);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 10.5px;
+  }
   .form-row input,
   .form-row textarea{
     width: 100%;
@@ -989,6 +995,9 @@
     color: var(--muted);
   }
 </style>
+<!-- Cloudflare Web Analytics -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "856f76483c5842399178e0147b0731cf"}'></script>
+<!-- End Cloudflare Web Analytics -->
 </head>
 <body>
 
@@ -1292,22 +1301,26 @@
     <div class="footer-prompt">$ contact --open</div>
     <div class="footer-name">Let's build something.</div>
 
-    <form class="contact-form reveal zoomable" id="contact-form">
+    <form class="contact-form reveal zoomable" id="contact-form"
+      action="https://docs.google.com/forms/d/e/1FAIpQLScpDlI6xQXD6reX7Gj4JLqbyOm0XbUmHTKT94Q4Sm8c21UGIw/formResponse"
+      method="POST" target="hidden-form-frame">
       <div class="form-row">
         <label for="cf-name">Name</label>
-        <input type="text" id="cf-name" name="name" required placeholder="Your name">
+        <input type="text" id="cf-name" name="entry.2005620554" required placeholder="Your name">
       </div>
       <div class="form-row">
-        <label for="cf-email">Email</label>
-        <input type="email" id="cf-email" name="email" required placeholder="you@example.com">
+        <label for="cf-email">Email <span class="form-optional">(optional)</span></label>
+        <input type="email" id="cf-email" name="entry.1045781291" placeholder="you@example.com (optional)">
       </div>
+      <input type="hidden" name="entry.1166974658" value="">
       <div class="form-row">
         <label for="cf-message">Message</label>
-        <textarea id="cf-message" name="message" required rows="4" placeholder="What would you like to talk about?"></textarea>
+        <textarea id="cf-message" name="entry.839337160" required rows="4" placeholder="What would you like to talk about?"></textarea>
       </div>
       <button type="submit" class="form-submit magnetic">Send message →</button>
-      <p class="form-hint" id="form-hint">Opens your email app with this message ready to send — I never see your details until you hit send.</p>
+      <p class="form-hint" id="form-hint">Sent directly to me — no email app needed, and email is optional.</p>
     </form>
+    <iframe name="hidden-form-frame" id="hidden-form-frame" style="display:none;" title="form submission target"></iframe>
 
     <div class="footer-links">
       <a class="magnetic" href="mailto:abrarimtiyaz01@gmail.com">Email</a>
@@ -1619,19 +1632,18 @@
     });
   }
 
-  // ---- Contact form: builds a pre-filled mailto (no backend, no phone number exposed) ----
+  // ---- Contact form: submits silently to Google Form via hidden iframe ----
   var contactForm = document.getElementById('contact-form');
   if (contactForm) {
-    contactForm.addEventListener('submit', function(e){
-      e.preventDefault();
-      var name = document.getElementById('cf-name').value.trim();
-      var email = document.getElementById('cf-email').value.trim();
-      var message = document.getElementById('cf-message').value.trim();
-      var subject = encodeURIComponent('Portfolio contact from ' + name);
-      var body = encodeURIComponent(message + '\n\n— ' + name + ' (' + email + ')');
-      window.location.href = 'mailto:abrarimtiyaz01@gmail.com?subject=' + subject + '&body=' + body;
+    contactForm.addEventListener('submit', function(){
+      // No preventDefault — the form's own target="hidden-form-frame" keeps this page from navigating.
       var hint = document.getElementById('form-hint');
-      if (hint) hint.textContent = 'Your email app should now be open with the message ready — hit send there.';
+      var btn = contactForm.querySelector('.form-submit');
+      setTimeout(function(){
+        if (hint) hint.textContent = '✓ Message sent — thanks for reaching out!';
+        if (btn) btn.textContent = 'Sent ✓';
+        contactForm.reset();
+      }, 700);
     });
   }
 
