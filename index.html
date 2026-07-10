@@ -844,6 +844,58 @@
   }
   .project-desc{ color: var(--muted); font-size: 14.5px; }
 
+  .projects-list{ display: flex; flex-direction: column; gap: 28px; }
+  .project-tags{ display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
+  .project-links{ display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+  .project-links a{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--copper-bright);
+    border: 1px solid var(--line);
+    padding: 7px 12px;
+    border-radius: 3px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .project-links a:hover{
+    border-color: var(--copper);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .project-embed-wrap{
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--panel-2);
+  }
+  .project-embed-label{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .project-embed-label .live-dot{
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--sage);
+    box-shadow: 0 0 6px var(--sage);
+    animation: blink 2.4s infinite;
+  }
+  .project-embed-wrap iframe{
+    width: 100%;
+    height: 560px;
+    border: none;
+    display: block;
+  }
+  @media (max-width: 700px){
+    .project-embed-wrap iframe{ height: 420px; }
+  }
+
   /* ---------- CERTS / WORKSHOPS ---------- */
   .cert-cols{
     display:grid;
@@ -1243,9 +1295,33 @@
       <span class="sec-title">Projects</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="project-card reveal tilt">
-      <div class="project-title">Power Supply cum Mobile Charger</div>
-      <p class="project-desc">Designed a regulated DC output suitable for mobile charging, with attention to basic safety and stability — a practical circuit-design project bridging electronics theory and a real, usable device.</p>
+    <div class="projects-list">
+
+      <div class="project-card reveal tilt">
+        <div class="project-title">Medical Image Segmentation (U-Net)</div>
+        <p class="project-desc">A deep learning pipeline for segmenting regions of interest in medical scans using a U-Net architecture, built and trained to identify structures within the input images. Wrapped in an interactive Streamlit app so a scan can be uploaded and segmented in real time, right in the browser — no local setup required.</p>
+        <div class="project-tags">
+          <span class="chip">Python</span>
+          <span class="chip">PyTorch</span>
+          <span class="chip">U-Net</span>
+          <span class="chip">Streamlit</span>
+          <span class="chip">Deep Learning</span>
+        </div>
+        <div class="project-links">
+          <a href="https://unet-app-rpu4s9tdvinapzfxntz9sr.streamlit.app" target="_blank" rel="noopener">Open live app ↗</a>
+          <a href="https://github.com/abrarimtiyaz01/Medical-Image-Segmentation" target="_blank" rel="noopener">View source on GitHub ↗</a>
+        </div>
+        <div class="project-embed-wrap">
+          <div class="project-embed-label"><span class="live-dot"></span> Live app embedded below — try it directly</div>
+          <iframe src="https://unet-app-rpu4s9tdvinapzfxntz9sr.streamlit.app/?embed=true" loading="lazy" title="Medical Image Segmentation live app" allow="clipboard-write"></iframe>
+        </div>
+      </div>
+
+      <div class="project-card reveal tilt">
+        <div class="project-title">Power Supply cum Mobile Charger</div>
+        <p class="project-desc">Designed a regulated DC output suitable for mobile charging, with attention to basic safety and stability — a practical circuit-design project bridging electronics theory and a real, usable device.</p>
+      </div>
+
     </div>
   </div>
 </section>
