@@ -7,18 +7,20 @@
 <meta name="description" content="Abrar Imtiyaz — Electronics &amp; Communication Engineering student specializing in Linux, Python, and applied machine learning. Portfolio, experience, and projects.">
 <meta name="keywords" content="Abrar Imtiyaz, Electronics Engineer, ECE, Python Developer, Linux, Machine Learning, Portfolio">
 <meta name="author" content="Abrar Imtiyaz">
+<link rel="canonical" href="https://abrarimtiyaz.in/">
 
 <!-- Open Graph / Facebook / LinkedIn -->
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://abrarimtiyaz.in/">
 <meta property="og:title" content="Abrar Imtiyaz — Electronics &amp; Software">
 <meta property="og:description" content="Electronics &amp; Communication Engineering student who works comfortably on both sides of the breadboard — Linux, Python, and applied ML.">
-<meta property="og:image" content="social-preview.png">
+<meta property="og:image" content="https://abrarimtiyaz.in/social-preview.png">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Abrar Imtiyaz — Electronics &amp; Software">
 <meta name="twitter:description" content="Electronics &amp; Communication Engineering student who works comfortably on both sides of the breadboard — Linux, Python, and applied ML.">
-<meta name="twitter:image" content="social-preview.png">
+<meta name="twitter:image" content="https://abrarimtiyaz.in/social-preview.png">
 
 <!-- Favicon: inline SVG circuit-node mark, no external file needed -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2312140F'/%3E%3Cpath d='M4 10 H12 L14 13 H20 L22 10 H28' stroke='%23C97A3D' stroke-width='2' fill='none'/%3E%3Cpath d='M4 22 H10 L12 19 H20 L22 22 H28' stroke='%237C9A82' stroke-width='2' fill='none'/%3E%3Ccircle cx='12' cy='13' r='2' fill='%23E0A05E'/%3E%3Ccircle cx='20' cy='19' r='2' fill='%237C9A82'/%3E%3C/svg%3E">
@@ -151,18 +153,6 @@
 
   nav, header, section, footer{ position: relative; z-index: 1; }
 
-  /* ---------- CURSOR SPOTLIGHT ---------- */
-  #spotlight{
-    position: fixed;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(201,122,61,0.06), transparent 40%);
-    transition: background 0.1s ease;
-  }
-  @media (hover: none){ #spotlight{ display: none; } }
-  @media (prefers-reduced-motion: reduce){ #spotlight{ display: none; } }
-
   body::before{
     content:"";
     position: fixed;
@@ -209,41 +199,20 @@
     will-change: transform;
   }
 
-  /* ---------- SCROLL-ZOOM FOCUS ---------- */
-  .zoomable{
-    transform-origin: center;
-    transition: opacity 0.7s ease, transform 0.2s ease-out;
-    will-change: transform;
-  }
-
-  /* ---------- SCROLL PING MARK ---------- */
-  .scroll-ping{
-    position: fixed;
-    width: 16px; height: 16px;
-    border: 2px solid var(--copper-bright);
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate(-50%, -50%) scale(0.5);
-    opacity: 0.9;
-    z-index: 90;
-    box-shadow: 0 0 12px rgba(224,160,94,0.5);
-    animation: pingOut 0.65s ease-out forwards;
-  }
-  .scroll-ping::after{
-    content:"";
+  .skip-link{
     position: absolute;
-    inset: 5px;
-    border-radius: 50%;
+    top: -100px;
+    left: 12px;
+    z-index: 200;
     background: var(--copper-bright);
-    opacity: 0.8;
+    color: var(--bg);
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 13px;
+    transition: top 0.2s ease;
   }
-  @keyframes pingOut{
-    to{ transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .scroll-ping{ display: none; }
-    .zoomable{ transform: none !important; transition: none !important; }
-  }
+  .skip-link:focus{ top: 12px; text-decoration: none; }
 
   .wrap{
     max-width: 980px;
@@ -316,11 +285,119 @@
   .nav-links a:hover, .nav-links a.active{ color: var(--copper-bright); text-decoration:none; }
   .nav-links a:hover::after, .nav-links a.active::after{ width: 100%; }
 
+  .nav-hamburger{
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .nav-hamburger span{
+    width: 22px; height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  .nav-hamburger.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2){ opacity: 0; }
+  .nav-hamburger.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 760px){
+    .nav-hamburger{ display: flex; }
+    .nav-links{
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      gap: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .nav-links.open{ max-height: 400px; }
+    .nav-links li{ width: 100%; }
+    .nav-links a{
+      display: block;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-links a::after{ display: none; }
+  }
+
   /* ---------- HERO ---------- */
   header.hero{
     padding: 90px 0 70px;
     position: relative;
   }
+  .hero-grid{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+  }
+  @media (max-width: 760px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .hero-avatar{ order: -1; width: 96px; height: 96px; margin-bottom: 8px; }
+  }
+  .hero-avatar{
+    width: 140px;
+    height: 140px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-avatar img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .headline{
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: clamp(20px, 3vw, 27px);
+    line-height: 1.3;
+    color: var(--text);
+    margin: 18px 0 6px;
+    max-width: 620px;
+  }
+
+  .social-row{
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .social-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 40px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--muted);
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .social-icon svg{ width: 18px; height: 18px; fill: currentColor; }
+  .social-icon:hover{
+    color: var(--copper-bright);
+    border-color: var(--copper);
+    transform: translateY(-3px);
+    text-decoration: none;
+  }
+
   .eyebrow{
     font-family: var(--mono);
     font-size: 13px;
@@ -508,20 +585,23 @@
     margin-bottom: 14px;
     letter-spacing: 0.04em;
   }
-  .now-list{ list-style: none; }
-  .now-list li{
-    position: relative;
-    padding-left: 20px;
-    margin-bottom: 10px;
-    color: var(--text);
-    font-size: 14.5px;
+  .status-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
   }
-  .now-list li:last-child{ margin-bottom: 0; }
-  .now-list li::before{
-    content: "▹";
-    position: absolute;
-    left: 0;
+  @media (max-width: 640px){ .status-grid{ grid-template-columns: 1fr; } }
+  .status-item{ display: flex; flex-direction: column; gap: 4px; }
+  .status-label{
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--copper-bright);
+  }
+  .status-value{
+    font-size: 14.5px;
+    color: var(--text);
   }
 
   section{ padding: 64px 0; border-top: 1px solid var(--line); }
@@ -599,6 +679,36 @@
 
   @media (max-width: 760px){
     .about-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- QUICK FACTS ---------- */
+  .quick-facts{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 30px;
+  }
+  @media (max-width: 640px){ .quick-facts{ grid-template-columns: repeat(2, 1fr); } }
+  .qf-item{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .qf-label{
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sage);
+  }
+  .qf-value{
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
   }
 
   /* ---------- TERMINAL WIDGET ---------- */
@@ -722,6 +832,27 @@
   @media (max-width: 560px){
     .bar-row{ grid-template-columns: 96px 1fr 34px; gap: 10px; }
   }
+  .bar-track.sm{ height: 4px; margin-top: 4px; }
+
+  .skill-categories{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 32px;
+  }
+  @media (max-width: 700px){ .skill-categories{ grid-template-columns: 1fr; } }
+  .skill-cards{ display: flex; flex-direction: column; gap: 10px; }
+  .skill-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px 14px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .skill-card:hover{ border-color: var(--copper); transform: translateX(3px); }
+  .skill-card-head{ display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
+  .skill-icon{ font-size: 15px; }
+  .skill-name{ font-size: 13.5px; font-weight: 600; color: var(--text); }
+  .skill-desc{ font-size: 12px; color: var(--muted); margin-bottom: 2px; line-height: 1.45; }
 
   /* ---------- TIMELINE (signature element) ---------- */
   .trace{
@@ -846,6 +977,31 @@
 
   .projects-list{ display: flex; flex-direction: column; gap: 28px; }
   .project-tags{ display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
+  .project-detail-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 600px){ .project-detail-grid{ grid-template-columns: 1fr; } }
+  .pd-block{
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .pd-label{
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 4px;
+  }
   .project-links{ display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
   .project-links a{
     font-family: var(--mono);
@@ -897,25 +1053,36 @@
   }
 
   /* ---------- CERTS / WORKSHOPS ---------- */
-  .cert-cols{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
+  .cert-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
   }
-  @media (max-width: 700px){ .cert-cols{ grid-template-columns: 1fr; } }
-  .cert-list{ list-style:none; }
-  .cert-list li{
-    padding: 12px 0;
-    border-bottom: 1px solid var(--line);
-    transition: transform 0.25s ease, padding-left 0.25s ease;
+  .cert-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 16px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
   }
-  .cert-list li:hover{
-    transform: translateX(4px);
-    padding-left: 6px;
+  .cert-card:hover{ border-color: var(--copper); transform: translateY(-3px); }
+  .cert-type{
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--copper-bright);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-bottom: 10px;
   }
-  .cert-list li:last-child{ border-bottom:none; }
-  .cert-name{ font-weight: 600; color: var(--text); font-size: 14.5px; }
-  .cert-meta{ font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+  .cert-card-title{ font-weight: 600; color: var(--text); font-size: 14px; margin-bottom: 6px; line-height: 1.35; }
+  .cert-card-issuer{ font-family: var(--mono); font-size: 11.5px; color: var(--sage); }
+  .cert-card-date{ font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .cert-card-skills{ font-size: 12px; color: var(--muted); margin-top: 6px; }
 
   /* ---------- CONTACT / FOOTER ---------- */
   footer{
@@ -1055,7 +1222,6 @@
 
 <div id="boot-screen"><div class="boot-lines" id="boot-lines"></div></div>
 
-<div id="spotlight"></div>
 <div id="scroll-progress"></div>
 
 <svg id="circuit-bg" viewBox="0 0 1200 2200" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -1085,7 +1251,9 @@
   <circle class="node" cx="800" cy="2000" r="3" fill="#7C9A82"/>
 </svg>
 
-<nav>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<nav aria-label="Primary navigation">
   <div class="wrap">
     <div class="nav-id">AI // portfolio.v1</div>
     <div class="nav-right">
@@ -1096,26 +1264,47 @@
         <li><a href="#experience">Experience</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#certs">Certs</a></li>
+        <li><a href="https://github.com/abrarimtiyaz01" target="_blank" rel="noopener">GitHub</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
       <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light and dark theme" type="button">🌙</button>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" type="button">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </nav>
 
-<header class="hero">
+<header class="hero" id="main-content">
   <div class="wrap">
-    <div class="eyebrow">STATUS: OPEN TO ENTRY-LEVEL ROLES</div>
-    <h1 class="name" id="hero-name">ABRAR<br><span>IMTIYAZ</span></h1>
-    <div class="role-cycle" id="role-cycle"><span id="rc-text"></span><span class="rc-cursor"></span></div>
-    <p class="role-line" id="role-line"><span id="type-target"></span><span class="type-cursor">&nbsp;</span></p>
-    <div class="hero-meta">
-      <div class="pin magnetic">📍 Pulwama, J&amp;K, India</div>
-      <div class="pin magnetic"><a href="mailto:abrarimtiyaz01@gmail.com">abrarimtiyaz01@gmail.com</a></div>
-      <div class="pin magnetic"><a href="#contact">Send a message →</a></div>
-      <div class="pin magnetic"><a href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">linkedin.com/in/abrarimtiyaz01</a></div>
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">🟢 OPEN TO ENGINEERING ROLES</div>
+        <h1 class="name" id="hero-name">ABRAR<br><span>IMTIYAZ</span></h1>
+        <p class="headline">Building software that connects hardware, AI, and the web.</p>
+        <div class="role-cycle" id="role-cycle"><span id="rc-text"></span><span class="rc-cursor"></span></div>
+        <p class="role-line" id="role-line"><span id="type-target"></span><span class="type-cursor">&nbsp;</span></p>
+        <div class="hero-meta">
+          <div class="pin magnetic">📍 Pulwama, J&amp;K, India</div>
+          <div class="pin magnetic"><a href="#contact">Send a message →</a></div>
+        </div>
+        <div class="social-row">
+          <a class="social-icon magnetic" href="https://github.com/abrarimtiyaz01" target="_blank" rel="noopener" aria-label="GitHub profile">
+            <svg viewBox="0 0 24 24"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.79-.25.79-.55 0-.27-.01-1.16-.02-2.11-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.05 11.05 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.81 1.18 1.83 1.18 3.09 0 4.41-2.7 5.38-5.27 5.67.41.36.78 1.08.78 2.17 0 1.57-.01 2.83-.01 3.22 0 .3.21.66.8.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          </a>
+          <a class="social-icon magnetic" href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener" aria-label="LinkedIn profile">
+            <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+          </a>
+          <a class="social-icon magnetic" href="mailto:abrarimtiyaz01@gmail.com" aria-label="Send email">
+            <svg viewBox="0 0 24 24"><path d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 18.5v-13zm2.2.3 7.3 5.8a.8.8 0 0 0 1 0l7.3-5.8a.6.6 0 0 0-.4-1H4.6a.6.6 0 0 0-.4 1z"/></svg>
+          </a>
+          <a class="social-icon magnetic" href="resume.pdf" download aria-label="Download resume">
+            <svg viewBox="0 0 24 24"><path d="M12 2a1 1 0 0 1 1 1v10.59l3.29-3.3a1 1 0 1 1 1.42 1.42l-5 5a1 1 0 0 1-1.42 0l-5-5a1 1 0 1 1 1.42-1.42L11 13.59V3a1 1 0 0 1 1-1zM4 19a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="hero-avatar" aria-hidden="false"><img src="profile.jpg" alt="Abrar Imtiyaz"></div>
     </div>
-    <a class="resume-btn magnetic" href="resume.pdf" download>⬇ Download Resume</a>
   </div>
 </header>
 
@@ -1124,7 +1313,7 @@
     <div class="stats-grid">
       <div class="stat"><div class="stat-num" data-count="2">0</div><div class="stat-label">Internships</div></div>
       <div class="stat"><div class="stat-num" data-count="4">0</div><div class="stat-label">Certifications</div></div>
-      <div class="stat"><div class="stat-num" data-count="2">0</div><div class="stat-label">Projects Built</div></div>
+      <div class="stat"><div class="stat-num" data-count="3">0</div><div class="stat-label">Projects Built</div></div>
       <div class="stat"><div class="stat-num" data-count="2026">0</div><div class="stat-label">Graduating</div></div>
     </div>
   </div>
@@ -1132,25 +1321,31 @@
 
 <section id="about">
   <div class="wrap">
-    <div class="sec-head reveal zoomable">
+    <div class="sec-head reveal">
       <span class="sec-tag">01</span>
       <span class="sec-title">About</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="about-grid reveal zoomable">
+    <div class="about-grid reveal">
       <div class="about-text">
         <p>I'm a <b>final-year B.Tech student in Electronics and Communication Engineering</b> at IUST Pulwama, graduating in 2026. My path so far has been deliberately hybrid: hardware fundamentals in the classroom, software fluency built through internships and self-study.</p>
         <p>Internships at <b>IIT Bombay</b> and <b>NIT Srinagar</b> gave me real hands-on time in Linux environments — automating tasks with BASH, version-controlling with Git, and later applying Python to basic machine learning workflows: preprocessing, exploration, and model evaluation.</p>
         <p>I pick up new tools quickly, work well independently on the command line, and I'm looking for an <b>entry-level role</b> where I can put these skills to work while continuing to grow.</p>
       </div>
-      <div class="focus-list reveal stagger zoomable">
+      <div class="focus-list reveal stagger">
         <div class="focus-item"><b>Software Development</b>Clean, reliable Python — built with problem-solving first.</div>
         <div class="focus-item"><b>Linux &amp; Networking</b>Command-line fluency, shell scripting, system administration basics.</div>
         <div class="focus-item"><b>Web &amp; Security</b>Exploring secure application design and common vulnerabilities.</div>
         <div class="focus-item"><b>Applied Machine Learning</b>Data preprocessing, model building, and evaluation.</div>
       </div>
     </div>
-    <div class="terminal-panel reveal zoomable">
+    <div class="quick-facts reveal stagger">
+      <div class="qf-item"><span class="qf-label">Education</span><span class="qf-value">B.Tech ECE, IUST · 2026</span></div>
+      <div class="qf-item"><span class="qf-label">Based in</span><span class="qf-value">Pulwama, J&amp;K, India</span></div>
+      <div class="qf-item"><span class="qf-label">Focus</span><span class="qf-value">Python · Linux · ML</span></div>
+      <div class="qf-item"><span class="qf-label">Availability</span><span class="qf-value">Entry-level SWE roles</span></div>
+    </div>
+    <div class="terminal-panel reveal">
       <div class="terminal-header">
         <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
         <span class="terminal-title">abrar@portfolio:~</span>
@@ -1162,109 +1357,161 @@
 
 <section id="now">
   <div class="wrap">
-    <div class="sec-head reveal zoomable">
+    <div class="sec-head reveal">
       <span class="sec-tag">//</span>
       <span class="sec-title">Now</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="now-panel reveal zoomable">
+    <div class="now-panel reveal">
       <div class="now-updated">Last updated: July 2026</div>
-      <ul class="now-list">
-        <li>Wrapping up my final year of B.Tech and preparing for placements / entry-level roles.</li>
-        <li>Deepening my Python + applied ML skills beyond what I covered at NIT Srinagar.</li>
-        <li>Building small side projects to practice full-stack basics alongside my hardware background.</li>
-      </ul>
+      <div class="status-grid">
+        <div class="status-item">
+          <span class="status-label">Currently Building</span>
+          <span class="status-value">Medical Image Segmentation Platform</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Learning</span>
+          <span class="status-value">React + Node.js</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Seeking</span>
+          <span class="status-value">Entry-level Engineering roles</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Reading</span>
+          <span class="status-value">Clean Code — Robert C. Martin</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <section id="skills">
   <div class="wrap">
-    <div class="sec-head reveal zoomable">
+    <div class="sec-head reveal">
       <span class="sec-tag">02</span>
       <span class="sec-title">Skills</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="core-skills reveal zoomable">
-      <div class="bar-row">
-        <span class="bar-label">Python</span>
-        <span class="bar-track"><span class="bar-fill" style="--pct:85%"></span></span>
-        <span class="bar-pct">85%</span>
-      </div>
-      <div class="bar-row">
-        <span class="bar-label">Linux / BASH</span>
-        <span class="bar-track"><span class="bar-fill" style="--pct:80%"></span></span>
-        <span class="bar-pct">80%</span>
-      </div>
-      <div class="bar-row">
-        <span class="bar-label">Circuit Design</span>
-        <span class="bar-track"><span class="bar-fill" style="--pct:75%"></span></span>
-        <span class="bar-pct">75%</span>
-      </div>
-      <div class="bar-row">
-        <span class="bar-label">Machine Learning</span>
-        <span class="bar-track"><span class="bar-fill" style="--pct:60%"></span></span>
-        <span class="bar-pct">60%</span>
-      </div>
-    </div>
-    <div class="skill-groups reveal stagger zoomable">
-      <div>
+    <div class="skill-categories reveal stagger">
+
+      <div class="skill-category">
         <div class="skill-group-label">Programming</div>
-        <div class="chips">
-          <span class="chip">Python</span><span class="chip">C</span>
+        <div class="skill-cards">
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">🐍</span><span class="skill-name">Python</span></div>
+            <p class="skill-desc">Scripting, automation, data handling, and ML workflows.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:85%"></span></span>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">🔤</span><span class="skill-name">C</span></div>
+            <p class="skill-desc">Core language fundamentals from coursework and embedded work.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:60%"></span></span>
+          </div>
         </div>
       </div>
-      <div>
-        <div class="skill-group-label">Linux &amp; Scripting</div>
-        <div class="chips">
-          <span class="chip">Linux CLI</span><span class="chip">BASH</span><span class="chip">Regex</span><span class="chip">SED</span><span class="chip">AWK</span><span class="chip">SSH</span>
+
+      <div class="skill-category">
+        <div class="skill-group-label">Web Development</div>
+        <div class="skill-cards">
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">🌐</span><span class="skill-name">HTML / CSS / JS</span></div>
+            <p class="skill-desc">Building and shipping this very portfolio from scratch.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:55%"></span></span>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">⚛️</span><span class="skill-name">React &amp; Node.js</span></div>
+            <p class="skill-desc">Currently learning — next step toward full-stack.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:30%"></span></span>
+          </div>
         </div>
       </div>
-      <div>
-        <div class="skill-group-label">Tools &amp; Platforms</div>
-        <div class="chips">
-          <span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">KiCad</span><span class="chip">MATLAB</span><span class="chip">Multisim</span><span class="chip">MS Office</span>
+
+      <div class="skill-category">
+        <div class="skill-group-label">Machine Learning</div>
+        <div class="skill-cards">
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">📊</span><span class="skill-name">Data Preprocessing</span></div>
+            <p class="skill-desc">Cleaning, exploring, and preparing data for models.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:65%"></span></span>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">🧠</span><span class="skill-name">Model Building</span></div>
+            <p class="skill-desc">U-Net segmentation model, built and evaluated end-to-end.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:60%"></span></span>
+          </div>
         </div>
       </div>
-      <div>
-        <div class="skill-group-label">Electronics &amp; Hardware</div>
-        <div class="chips">
-          <span class="chip">Circuit Design</span><span class="chip">Soldering</span><span class="chip">Power Supply Design</span>
+
+      <div class="skill-category">
+        <div class="skill-group-label">Electronics</div>
+        <div class="skill-cards">
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">🔌</span><span class="skill-name">Circuit Design</span></div>
+            <p class="skill-desc">Schematic design, KiCad, and Multisim simulation.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:75%"></span></span>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">🔧</span><span class="skill-name">Soldering &amp; Prototyping</span></div>
+            <p class="skill-desc">Hands-on build of a regulated power supply / charger.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:70%"></span></span>
+          </div>
         </div>
       </div>
-      <div>
-        <div class="skill-group-label">Python Applications</div>
-        <div class="chips">
-          <span class="chip">Sockets / Networking</span><span class="chip">Database Interaction</span><span class="chip">Web Scraping</span>
+
+      <div class="skill-category">
+        <div class="skill-group-label">Tools</div>
+        <div class="skill-cards">
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">🐧</span><span class="skill-name">Linux / BASH</span></div>
+            <p class="skill-desc">Daily driver CLI, shell scripting, SED/AWK/Regex.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:80%"></span></span>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">🔗</span><span class="skill-name">Git &amp; GitHub</span></div>
+            <p class="skill-desc">Version control across coursework and personal projects.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:75%"></span></span>
+          </div>
         </div>
       </div>
-      <div>
-        <div class="skill-group-label">Professional</div>
-        <div class="chips">
-          <span class="chip">Communication</span><span class="chip">Analytical Thinking</span><span class="chip">Team Collaboration</span>
+
+      <div class="skill-category">
+        <div class="skill-group-label">Soft Skills</div>
+        <div class="skill-cards">
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">💬</span><span class="skill-name">Communication</span></div>
+            <p class="skill-desc">Clear technical writing and presenting to non-technical audiences.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:80%"></span></span>
+          </div>
+          <div class="skill-card">
+            <div class="skill-card-head"><span class="skill-icon">🤝</span><span class="skill-name">Team Collaboration</span></div>
+            <p class="skill-desc">Worked within a 4-person team on the final-year project.</p>
+            <span class="bar-track sm"><span class="bar-fill" style="--pct:80%"></span></span>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
 
 <section id="experience">
   <div class="wrap">
-    <div class="sec-head reveal zoomable">
+    <div class="sec-head reveal">
       <span class="sec-tag">03</span>
       <span class="sec-title">Experience &amp; Education</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="trace reveal zoomable">
+    <div class="trace reveal">
       <div class="trace-item">
         <div class="via"></div>
         <div class="trace-date">JAN – FEB 2025</div>
         <div class="trace-title">Winter Intern (Internship cum Training)</div>
         <div class="trace-org">National Institute of Technology, Srinagar</div>
         <ul>
-          <li>Acquired hands-on experience in Machine Learning and AI fundamentals, including data preprocessing and exploratory analysis.</li>
-          <li>Implemented basic ML models using Python and assisted in building end-to-end ML workflows.</li>
-          <li>Contributed to interpreting model outputs and evaluating performance.</li>
+          <li>Built and evaluated Machine Learning models end-to-end, from raw data to interpretable results.</li>
+          <li>Applied structured preprocessing and exploratory analysis to improve model input quality.</li>
+          <li>Delivered working ML workflows within a short, focused training window.</li>
         </ul>
       </div>
       <div class="trace-item">
@@ -1273,9 +1520,9 @@
         <div class="trace-title">Summer Intern</div>
         <div class="trace-org">Indian Institute of Technology, Bombay</div>
         <ul>
-          <li>Worked extensively in a Linux-based environment, automating routine tasks using BASH scripting.</li>
-          <li>Applied Python for scripting and data handling, and used Git for version control.</li>
-          <li>Strengthened command-line proficiency while supporting day-to-day technical operations.</li>
+          <li>Automated repetitive operational tasks with BASH, reducing manual effort in a live Linux environment.</li>
+          <li>Shipped Python scripts for data handling, version-controlled with Git from day one.</li>
+          <li>Built strong command-line fluency while directly supporting day-to-day technical operations.</li>
         </ul>
       </div>
       <div class="trace-item">
@@ -1290,7 +1537,7 @@
 
 <section id="projects">
   <div class="wrap">
-    <div class="sec-head reveal zoomable">
+    <div class="sec-head reveal">
       <span class="sec-tag">04</span>
       <span class="sec-title">Projects</span>
       <span class="sec-rule"></span>
@@ -1307,6 +1554,12 @@
           <span class="chip">Streamlit</span>
           <span class="chip">Deep Learning</span>
         </div>
+        <div class="project-detail-grid">
+          <div class="pd-block"><span class="pd-label">Problem Solved</span>Manual segmentation of medical scans is slow and inconsistent — this automates the first pass.</div>
+          <div class="pd-block"><span class="pd-label">Features</span>Upload a scan, run inference, and view the segmented mask instantly in-browser.</div>
+          <div class="pd-block"><span class="pd-label">Challenges</span>Getting a U-Net to generalize well on a limited medical imaging dataset.</div>
+          <div class="pd-block"><span class="pd-label">What I Learned</span>End-to-end deep learning delivery — from model training to a deployed, usable app.</div>
+        </div>
         <div class="project-links">
           <a href="https://unet-app-rpu4s9tdvinapzfxntz9sr.streamlit.app" target="_blank" rel="noopener">Open live app ↗</a>
           <a href="https://github.com/abrarimtiyaz01/Medical-Image-Segmentation" target="_blank" rel="noopener">View source on GitHub ↗</a>
@@ -1318,8 +1571,39 @@
       </div>
 
       <div class="project-card reveal tilt">
+        <div class="project-title">This Portfolio Website</div>
+        <p class="project-desc">A single-file, self-contained personal site built from scratch — circuit-board visual identity, scroll-driven animations, dark/light theming, and a live contact pipeline, hosted free on GitHub Pages.</p>
+        <div class="project-tags">
+          <span class="chip">HTML</span>
+          <span class="chip">CSS</span>
+          <span class="chip">JavaScript</span>
+          <span class="chip">GitHub Pages</span>
+        </div>
+        <div class="project-detail-grid">
+          <div class="pd-block"><span class="pd-label">Problem Solved</span>A recruiter-facing home base that reflects both my hardware and software sides.</div>
+          <div class="pd-block"><span class="pd-label">Features</span>Theme toggle, animated timeline, embedded live project demo, and a working contact form.</div>
+          <div class="pd-block"><span class="pd-label">Challenges</span>Getting silent form submission working reliably without a backend.</div>
+          <div class="pd-block"><span class="pd-label">What I Learned</span>Vanilla JS animation techniques and how far a single HTML file can go.</div>
+        </div>
+        <div class="project-links">
+          <a href="https://abrarimtiyaz.in" target="_blank" rel="noopener">View live site ↗</a>
+        </div>
+      </div>
+
+      <div class="project-card reveal tilt">
         <div class="project-title">Power Supply cum Mobile Charger</div>
         <p class="project-desc">Designed a regulated DC output suitable for mobile charging, with attention to basic safety and stability — a practical circuit-design project bridging electronics theory and a real, usable device.</p>
+        <div class="project-tags">
+          <span class="chip">Circuit Design</span>
+          <span class="chip">KiCad</span>
+          <span class="chip">Multisim</span>
+        </div>
+        <div class="project-detail-grid">
+          <div class="pd-block"><span class="pd-label">Problem Solved</span>A compact, reliable regulated supply for everyday mobile charging.</div>
+          <div class="pd-block"><span class="pd-label">Features</span>Stable regulated DC output with basic protection built in.</div>
+          <div class="pd-block"><span class="pd-label">Challenges</span>Balancing output stability against component cost and size.</div>
+          <div class="pd-block"><span class="pd-label">What I Learned</span>Bridging theoretical circuit design with a real, working device.</div>
+        </div>
       </div>
 
     </div>
@@ -1328,45 +1612,49 @@
 
 <section id="certs">
   <div class="wrap">
-    <div class="sec-head reveal zoomable">
+    <div class="sec-head reveal">
       <span class="sec-tag">05</span>
       <span class="sec-title">Certifications &amp; Workshops</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="cert-cols reveal zoomable">
-      <div>
-        <div class="skill-group-label">Certifications</div>
-        <ul class="cert-list">
-          <li>
-            <div class="cert-name">e-Yantra Online Software Foundation Course</div>
-            <div class="cert-meta">IIT Bombay · Jul 2024 · Linux, Shell Scripting, Regex, SED, AWK</div>
-          </li>
-          <li>
-            <div class="cert-name">Python Fundamentals</div>
-            <div class="cert-meta">DIGISAKSHAM · Sep 2024 · Python Programming, Core Concepts</div>
-          </li>
-        </ul>
+    <div class="cert-grid reveal stagger">
+      <div class="cert-card">
+        <span class="cert-type">Certification</span>
+        <div class="cert-card-title">e-Yantra Online Software Foundation Course</div>
+        <div class="cert-card-issuer">IIT Bombay</div>
+        <div class="cert-card-date">Jul 2024</div>
+        <div class="cert-card-skills">Linux, Shell Scripting, Regex, SED, AWK</div>
       </div>
-      <div>
-        <div class="skill-group-label">Workshops &amp; Webinars</div>
-        <ul class="cert-list">
-          <li>
-            <div class="cert-name">One-Day 3D Modelling &amp; Printing Workshop</div>
-            <div class="cert-meta">CIED–IUST Foundation · Jun 2025</div>
-          </li>
-          <li>
-            <div class="cert-name">Mind Over Matter</div>
-            <div class="cert-meta">NIT Srinagar · 21–22 Nov 2024</div>
-          </li>
-          <li>
-            <div class="cert-name">AI &amp; ML in Real Life</div>
-            <div class="cert-meta">GUVI · 27 Dec 2024</div>
-          </li>
-          <li>
-            <div class="cert-name">Master the Art of Data Visualization</div>
-            <div class="cert-meta">GUVI · 26 Dec 2024</div>
-          </li>
-        </ul>
+      <div class="cert-card">
+        <span class="cert-type">Certification</span>
+        <div class="cert-card-title">Python Fundamentals</div>
+        <div class="cert-card-issuer">DIGISAKSHAM</div>
+        <div class="cert-card-date">Sep 2024</div>
+        <div class="cert-card-skills">Python Programming, Core Concepts</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-type">Workshop</span>
+        <div class="cert-card-title">One-Day 3D Modelling &amp; Printing Workshop</div>
+        <div class="cert-card-issuer">CIED–IUST Foundation</div>
+        <div class="cert-card-date">Jun 2025</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-type">Workshop</span>
+        <div class="cert-card-title">Mind Over Matter</div>
+        <div class="cert-card-issuer">NIT Srinagar</div>
+        <div class="cert-card-date">21–22 Nov 2024</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-type">Webinar</span>
+        <div class="cert-card-title">AI &amp; ML in Real Life</div>
+        <div class="cert-card-issuer">GUVI</div>
+        <div class="cert-card-date">27 Dec 2024</div>
+      </div>
+      <div class="cert-card">
+        <span class="cert-type">Webinar</span>
+        <div class="cert-card-title">Master the Art of Data Visualization</div>
+        <div class="cert-card-issuer">GUVI</div>
+        <div class="cert-card-date">26 Dec 2024</div>
       </div>
     </div>
   </div>
@@ -1377,32 +1665,16 @@
     <div class="footer-prompt">$ contact --open</div>
     <div class="footer-name">Let's build something.</div>
 
-    <form class="contact-form reveal zoomable" id="contact-form"
-      action="https://docs.google.com/forms/d/e/1FAIpQLScpDlI6xQXD6reX7Gj4JLqbyOm0XbUmHTKT94Q4Sm8c21UGIw/formResponse"
-      method="POST" target="hidden-form-frame">
-      <div class="form-row">
-        <label for="cf-name">Name</label>
-        <input type="text" id="cf-name" name="entry.2005620554" required placeholder="Your name">
-      </div>
-      <div class="form-row">
-        <label for="cf-email">Email <span class="form-optional">(optional)</span></label>
-        <input type="email" id="cf-email" name="entry.1045781291" placeholder="you@example.com (optional)">
-      </div>
-      <input type="hidden" name="entry.1166974658" value="">
-      <div class="form-row">
-        <label for="cf-message">Message</label>
-        <textarea id="cf-message" name="entry.839337160" required rows="4" placeholder="What would you like to talk about?"></textarea>
-      </div>
-      <button type="submit" class="form-submit magnetic">Send message →</button>
-      <p class="form-hint" id="form-hint">Sent directly to me — no email app needed, and email is optional.</p>
-    </form>
-    <iframe name="hidden-form-frame" id="hidden-form-frame" style="display:none;" title="form submission target"></iframe>
+    <div class="contact-form reveal" style="padding:0; overflow:hidden;">
+      <div class="project-embed-label"><span class="live-dot"></span> Message form — delivered straight to me</div>
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScpDlI6xQXD6reX7Gj4JLqbyOm0XbUmHTKT94Q4Sm8c21UGIw/viewform?embedded=true" width="100%" height="600" style="display:block; border:none;" loading="lazy" title="Contact form">Loading…</iframe>
+    </div>
 
     <div class="footer-links">
       <a class="magnetic" href="mailto:abrarimtiyaz01@gmail.com">Email</a>
       <a class="magnetic" href="https://linkedin.com/in/abrarimtiyaz01" target="_blank" rel="noopener">LinkedIn</a>
     </div>
-    <div class="fine">Abrar Imtiyaz · Pulwama, J&amp;K, India</div>
+    <div class="fine">© 2026 Abrar Imtiyaz · Built with HTML, CSS &amp; JavaScript · Made with ❤️</div>
   </div>
 </footer>
 
@@ -1498,14 +1770,6 @@
   document.addEventListener('scroll', updateActiveNav, { passive: true });
   updateActiveNav();
 
-  // ---- Cursor spotlight ----
-  if (!reduceMotion && matchMedia('(hover: hover)').matches) {
-    document.addEventListener('mousemove', function(e){
-      document.documentElement.style.setProperty('--mx', e.clientX + 'px');
-      document.documentElement.style.setProperty('--my', e.clientY + 'px');
-    }, { passive: true });
-  }
-
   // ---- Magnetic hover ----
   if (!reduceMotion && matchMedia('(hover: hover)').matches) {
     document.querySelectorAll('.magnetic').forEach(function(el){
@@ -1519,58 +1783,6 @@
         el.style.transform = 'translate(0,0)';
       });
     });
-  }
-
-  // ---- Scroll-zoom focus: elements near viewport center scale up slightly ----
-  var zoomEls = document.querySelectorAll('.zoomable');
-  if (!reduceMotion && zoomEls.length) {
-    var ticking = false;
-    function updateZoom(){
-      var centerY = window.innerHeight / 2;
-      var maxDist = window.innerHeight * 0.75;
-      zoomEls.forEach(function(el){
-        if (!el.classList.contains('in-view')) return; // let the reveal slide-in finish untouched
-        var r = el.getBoundingClientRect();
-        var elCenter = r.top + r.height / 2;
-        var dist = Math.abs(elCenter - centerY);
-        var t = Math.min(dist / maxDist, 1); // 0 = centered, 1 = far
-        var scale = 1.035 - (t * 0.075); // ranges ~1.035 (centered) to 0.96 (far)
-        el.style.transform = 'scale(' + scale.toFixed(3) + ')';
-      });
-      ticking = false;
-    }
-    function requestZoomUpdate(){
-      if (!ticking){
-        window.requestAnimationFrame(updateZoom);
-        ticking = true;
-      }
-    }
-    document.addEventListener('scroll', requestZoomUpdate, { passive: true });
-    window.addEventListener('resize', requestZoomUpdate);
-    requestZoomUpdate();
-  }
-
-  // ---- Wheel "mark and zoom" ping at cursor position ----
-  if (!reduceMotion) {
-    var lastMouseX = window.innerWidth / 2;
-    var lastMouseY = window.innerHeight / 2;
-    document.addEventListener('mousemove', function(e){
-      lastMouseX = e.clientX;
-      lastMouseY = e.clientY;
-    }, { passive: true });
-
-    var lastPingTime = 0;
-    document.addEventListener('wheel', function(){
-      var now = Date.now();
-      if (now - lastPingTime < 90) return; // throttle so pings don't flood
-      lastPingTime = now;
-      var ping = document.createElement('div');
-      ping.className = 'scroll-ping';
-      ping.style.left = lastMouseX + 'px';
-      ping.style.top = lastMouseY + 'px';
-      document.body.appendChild(ping);
-      setTimeout(function(){ ping.remove(); }, 700);
-    }, { passive: true });
   }
 
   // ---- Boot screen ----
@@ -1599,6 +1811,24 @@
         setTimeout(function(){ bootScreen.style.display = 'none'; }, 550);
       }, totalDelay);
     }
+  }
+
+  // ---- Mobile hamburger menu ----
+  var hamburger = document.getElementById('nav-hamburger');
+  var navLinksEl = document.querySelector('.nav-links');
+  if (hamburger && navLinksEl) {
+    hamburger.addEventListener('click', function(){
+      var isOpen = navLinksEl.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    navLinksEl.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click', function(){
+        navLinksEl.classList.remove('open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
   }
 
   // ---- Theme toggle ----
