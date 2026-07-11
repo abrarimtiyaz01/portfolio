@@ -1665,10 +1665,23 @@
     <div class="footer-prompt">$ contact --open</div>
     <div class="footer-name">Let's build something.</div>
 
-    <div class="contact-form reveal" style="padding:0; overflow:hidden;">
-      <div class="project-embed-label"><span class="live-dot"></span> Message form — delivered straight to me</div>
-      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScpDlI6xQXD6reX7Gj4JLqbyOm0XbUmHTKT94Q4Sm8c21UGIw/viewform?embedded=true" width="100%" height="600" style="display:block; border:none;" loading="lazy" title="Contact form">Loading…</iframe>
-    </div>
+    <form class="contact-form reveal" id="contact-form">
+      <div class="form-row">
+        <label for="cf-name">Name</label>
+        <input type="text" id="cf-name" name="name" required placeholder="Your name">
+      </div>
+      <div class="form-row">
+        <label for="cf-email">Email <span class="form-optional">(optional)</span></label>
+        <input type="email" id="cf-email" name="email" placeholder="you@example.com (optional)">
+      </div>
+      <div class="form-row">
+        <label for="cf-message">Message</label>
+        <textarea id="cf-message" name="message" required rows="4" placeholder="What would you like to talk about?"></textarea>
+      </div>
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <button type="submit" class="form-submit magnetic">Send message →</button>
+      <p class="form-hint" id="form-hint">Sent directly to me — no email app needed, and email is optional.</p>
+    </form>
 
     <div class="footer-links">
       <a class="magnetic" href="mailto:abrarimtiyaz01@gmail.com">Email</a>
@@ -1938,18 +1951,37 @@
     });
   }
 
-  // ---- Contact form: submits silently to Google Form via hidden iframe ----
+  // ---- Contact form: submits via FormSubmit AJAX (no page reload, no third-party UI shown) ----
   var contactForm = document.getElementById('contact-form');
   if (contactForm) {
-    contactForm.addEventListener('submit', function(){
-      // No preventDefault — the form's own target="hidden-form-frame" keeps this page from navigating.
+    contactForm.addEventListener('submit', function(e){
+      e.preventDefault();
       var hint = document.getElementById('form-hint');
       var btn = contactForm.querySelector('.form-submit');
-      setTimeout(function(){
-        if (hint) hint.textContent = '✓ Message sent — thanks for reaching out!';
-        if (btn) btn.textContent = 'Sent ✓';
-        contactForm.reset();
-      }, 700);
+      var originalBtnText = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+      if (hint) hint.textContent = 'Sending your message…';
+
+      var formData = new FormData(contactForm);
+      formData.append('_subject', 'New message from abrarimtiyaz.in');
+      formData.append('_template', 'table');
+      formData.append('_captcha', 'false');
+
+      fetch('https://formsubmit.co/ajax/abrarimtiyaz01@gmail.com', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: formData
+      })
+        .then(function(res){ return res.ok ? res.json() : Promise.reject(res); })
+        .then(function(){
+          if (hint) hint.textContent = '✓ Message sent — thanks for reaching out!';
+          if (btn) btn.textContent = 'Sent ✓';
+          contactForm.reset();
+        })
+        .catch(function(){
+          if (hint) hint.textContent = 'Something went wrong — please email me directly instead.';
+          if (btn) { btn.disabled = false; btn.textContent = originalBtnText; }
+        });
     });
   }
 
