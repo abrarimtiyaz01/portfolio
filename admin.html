@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — abrarimtiyaz.in</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --bg:#12140F; --panel:#1A1D15; --panel-2:#202318; --copper:#C97A3D; --copper-bright:#E0A05E;
+    --sage:#7C9A82; --text:#ECEAE0; --muted:#8D9086; --line:#33362A;
+  }
+  *{ box-sizing:border-box; }
+  body{ background:var(--bg); color:var(--text); font-family:-apple-system,'Segoe UI',sans-serif; margin:0; }
+  .wrap{ max-width:900px; margin:0 auto; padding:30px 20px 80px; }
+  h1{ font-size:22px; margin-bottom:4px; }
+  .sub{ color:var(--muted); font-size:13px; margin-bottom:24px; }
+
+  #login-screen{ max-width:360px; margin:80px auto; }
+  #login-screen input{ width:100%; padding:10px 12px; margin-bottom:10px; background:var(--panel-2); border:1px solid var(--line); border-radius:4px; color:var(--text); font-size:14px; }
+  #login-screen button{ width:100%; padding:11px; background:var(--copper-bright); color:var(--bg); border:none; border-radius:4px; font-weight:600; cursor:pointer; }
+  #login-error{ color:#E0605A; font-size:13px; margin-top:8px; min-height:18px; }
+
+  #admin-screen{ display:none; }
+  .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .logout-btn{ background:none; border:1px solid var(--line); color:var(--muted); padding:8px 14px; border-radius:4px; cursor:pointer; font-size:13px; }
+
+  .tabs{ display:flex; gap:6px; margin-bottom:24px; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:0; }
+  .tab-btn{ background:none; border:none; color:var(--muted); padding:10px 16px; cursor:pointer; font-size:14px; border-bottom:2px solid transparent; }
+  .tab-btn.active{ color:var(--copper-bright); border-bottom-color:var(--copper-bright); }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+
+  .item-card{ background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:14px 16px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .item-info b{ display:block; font-size:14px; }
+  .item-info span{ font-size:12px; color:var(--muted); }
+  .item-actions{ display:flex; gap:8px; flex-shrink:0; }
+  .item-actions button{ background:var(--panel-2); border:1px solid var(--line); color:var(--text); padding:6px 10px; border-radius:4px; cursor:pointer; font-size:12px; }
+  .item-actions button.danger{ color:#E0605A; }
+
+  form.item-form{ background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:18px; margin-top:20px; }
+  form.item-form h3{ margin-top:0; font-size:15px; color:var(--copper-bright); }
+  .field{ margin-bottom:12px; }
+  .field label{ display:block; font-size:12px; color:var(--sage); margin-bottom:4px; }
+  .field input, .field textarea, .field select{ width:100%; padding:9px 10px; background:var(--panel-2); border:1px solid var(--line); border-radius:4px; color:var(--text); font-size:13px; font-family:inherit; }
+  .field textarea{ min-height:70px; resize:vertical; }
+  .form-actions{ display:flex; gap:10px; margin-top:14px; }
+  .form-actions button{ padding:9px 18px; border-radius:4px; cursor:pointer; font-size:13px; border:none; }
+  .btn-save{ background:var(--copper-bright); color:var(--bg); font-weight:600; }
+  .btn-cancel{ background:none; border:1px solid var(--line) !important; color:var(--muted); }
+  .btn-add{ background:var(--panel-2); border:1px dashed var(--line); color:var(--copper-bright); padding:10px 16px; border-radius:4px; cursor:pointer; width:100%; margin-top:8px; }
+  .status-msg{ font-size:12px; color:var(--sage); margin-top:10px; min-height:16px; }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="wrap">
+    <h1>Admin Login</h1>
+    <p class="sub">abrarimtiyaz.in content manager</p>
+    <input type="email" id="login-email" placeholder="Email">
+    <input type="password" id="login-password" placeholder="Password">
+    <button id="login-btn">Log In</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+
+<div id="admin-screen">
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>Portfolio Admin</h1>
+        <p class="sub" id="user-email"></p>
+      </div>
+      <button class="logout-btn" id="logout-btn">Log Out</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="now">Now</button>
+      <button class="tab-btn" data-tab="experience">Experience</button>
+      <button class="tab-btn" data-tab="projects">Projects</button>
+      <button class="tab-btn" data-tab="certifications">Certifications</button>
+      <button class="tab-btn" data-tab="skills">Skills</button>
+    </div>
+
+    <div class="panel active" id="panel-now"></div>
+    <div class="panel" id="panel-experience"></div>
+    <div class="panel" id="panel-projects"></div>
+    <div class="panel" id="panel-certifications"></div>
+    <div class="panel" id="panel-skills"></div>
+  </div>
+</div>
+
+<script type="module">
+import {
+  db, auth, collection, doc, getDocs, getDoc, addDoc, setDoc, updateDoc,
+  deleteDoc, query, orderBy, signInWithEmailAndPassword, onAuthStateChanged, signOut
+} from './firebase-config.js';
+
+const loginScreen = document.getElementById('login-screen');
+const adminScreen = document.getElementById('admin-screen');
+
+document.getElementById('login-btn').addEventListener('click', async () => {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    errEl.textContent = 'Login failed — check your email and password.';
+  }
+});
+
+document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loginScreen.style.display = 'none';
+    adminScreen.style.display = 'block';
+    document.getElementById('user-email').textContent = user.email;
+    loadAllPanels();
+  } else {
+    loginScreen.style.display = 'block';
+    adminScreen.style.display = 'none';
+  }
+});
+
+// ---- Tab switching ----
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ---- Schema config per collection ----
+const schemas = {
+  experience: {
+    fields: [
+      { key: 'title', label: 'Title', type: 'text' },
+      { key: 'org', label: 'Organization', type: 'text' },
+      { key: 'date', label: 'Date', type: 'text' },
+      { key: 'bullets', label: 'Bullet points (one per line)', type: 'lines' },
+      { key: 'order', label: 'Order (lower = first)', type: 'number' }
+    ],
+    display: (d) => ({ title: d.title, sub: d.org + ' · ' + d.date })
+  },
+  projects: {
+    fields: [
+      { key: 'title', label: 'Title', type: 'text' },
+      { key: 'description', label: 'Description', type: 'textarea' },
+      { key: 'tags', label: 'Tags (comma separated)', type: 'csv' },
+      { key: 'problem', label: 'Problem Solved', type: 'textarea' },
+      { key: 'features', label: 'Features', type: 'textarea' },
+      { key: 'challenges', label: 'Challenges', type: 'textarea' },
+      { key: 'learned', label: 'What I Learned', type: 'textarea' },
+      { key: 'liveUrl', label: 'Live URL', type: 'text' },
+      { key: 'githubUrl', label: 'GitHub URL', type: 'text' },
+      { key: 'embedUrl', label: 'Embed URL (optional, for iframe)', type: 'text' },
+      { key: 'order', label: 'Order (lower = first)', type: 'number' }
+    ],
+    display: (d) => ({ title: d.title, sub: (d.tags || []).join(', ') })
+  },
+  certifications: {
+    fields: [
+      { key: 'title', label: 'Title', type: 'text' },
+      { key: 'issuer', label: 'Issuer', type: 'text' },
+      { key: 'date', label: 'Date', type: 'text' },
+      { key: 'type', label: 'Type', type: 'select', options: ['Certification', 'Workshop', 'Webinar'] },
+      { key: 'skills', label: 'Skills learned (optional)', type: 'text' },
+      { key: 'order', label: 'Order (lower = first)', type: 'number' }
+    ],
+    display: (d) => ({ title: d.title, sub: d.issuer + ' · ' + d.date })
+  },
+  skills: {
+    fields: [
+      { key: 'category', label: 'Category', type: 'text' },
+      { key: 'icon', label: 'Icon (emoji)', type: 'text' },
+      { key: 'name', label: 'Skill name', type: 'text' },
+      { key: 'desc', label: 'Description', type: 'textarea' },
+      { key: 'pct', label: 'Proficiency % (0-100)', type: 'number' },
+      { key: 'order', label: 'Order (lower = first)', type: 'number' }
+    ],
+    display: (d) => ({ title: d.name, sub: d.category + ' · ' + d.pct + '%' })
+  }
+};
+
+function fieldToInput(field, value) {
+  const val = value === undefined || value === null ? '' : value;
+  if (field.type === 'textarea') {
+    return `<textarea data-key="${field.key}">${escapeHtml(val)}</textarea>`;
+  }
+  if (field.type === 'lines') {
+    const text = Array.isArray(val) ? val.join('\n') : val;
+    return `<textarea data-key="${field.key}" data-type="lines">${escapeHtml(text)}</textarea>`;
+  }
+  if (field.type === 'csv') {
+    const text = Array.isArray(val) ? val.join(', ') : val;
+    return `<input type="text" data-key="${field.key}" data-type="csv" value="${escapeHtml(text)}">`;
+  }
+  if (field.type === 'number') {
+    return `<input type="number" data-key="${field.key}" value="${escapeHtml(val)}">`;
+  }
+  if (field.type === 'select') {
+    const opts = field.options.map(o => `<option value="${o}" ${o === val ? 'selected' : ''}>${o}</option>`).join('');
+    return `<select data-key="${field.key}">${opts}</select>`;
+  }
+  return `<input type="text" data-key="${field.key}" value="${escapeHtml(val)}">`;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function readForm(formEl, fields) {
+  const data = {};
+  fields.forEach(field => {
+    const el = formEl.querySelector(`[data-key="${field.key}"]`);
+    if (field.type === 'lines') {
+      data[field.key] = el.value.split('\n').map(s => s.trim()).filter(Boolean);
+    } else if (field.type === 'csv') {
+      data[field.key] = el.value.split(',').map(s => s.trim()).filter(Boolean);
+    } else if (field.type === 'number') {
+      data[field.key] = Number(el.value) || 0;
+    } else {
+      data[field.key] = el.value;
+    }
+  });
+  return data;
+}
+
+async function loadPanel(colName) {
+  const schema = schemas[colName];
+  const panel = document.getElementById('panel-' + colName);
+  panel.innerHTML = '<p class="sub">Loading…</p>';
+
+  const q = query(collection(db, colName), orderBy('order'));
+  const snap = await getDocs(q);
+
+  let html = '';
+  snap.forEach(docSnap => {
+    const d = docSnap.data();
+    const disp = schema.display(d);
+    html += `<div class="item-card">
+      <div class="item-info"><b>${escapeHtml(disp.title || '')}</b><span>${escapeHtml(disp.sub || '')}</span></div>
+      <div class="item-actions">
+        <button class="edit-btn" data-id="${docSnap.id}" data-col="${colName}">Edit</button>
+        <button class="danger delete-btn" data-id="${docSnap.id}" data-col="${colName}">Delete</button>
+      </div>
+    </div>`;
+  });
+  html += `<button class="btn-add" data-col="${colName}">+ Add new ${colName.slice(0, -1)}</button>`;
+  html += `<div id="form-slot-${colName}"></div>`;
+  panel.innerHTML = html;
+
+  panel.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const docSnap = await getDoc(doc(db, colName, btn.dataset.id));
+      renderForm(colName, btn.dataset.id, docSnap.data());
+    });
+  });
+  panel.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Delete this item? This cannot be undone.')) return;
+      await deleteDoc(doc(db, colName, btn.dataset.id));
+      loadPanel(colName);
+    });
+  });
+  panel.querySelector('.btn-add').addEventListener('click', () => renderForm(colName, null, {}));
+}
+
+function renderForm(colName, docId, data) {
+  const schema = schemas[colName];
+  const slot = document.getElementById('form-slot-' + colName);
+  const fieldsHtml = schema.fields.map(f =>
+    `<div class="field"><label>${f.label}</label>${fieldToInput(f, data[f.key])}</div>`
+  ).join('');
+
+  slot.innerHTML = `<form class="item-form">
+    <h3>${docId ? 'Edit' : 'Add new'} ${colName.slice(0, -1)}</h3>
+    ${fieldsHtml}
+    <div class="form-actions">
+      <button type="submit" class="btn-save">Save</button>
+      <button type="button" class="btn-cancel">Cancel</button>
+    </div>
+    <div class="status-msg"></div>
+  </form>`;
+
+  const formEl = slot.querySelector('form');
+  formEl.querySelector('.btn-cancel').addEventListener('click', () => { slot.innerHTML = ''; });
+
+  formEl.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = readForm(formEl, schema.fields);
+    const statusEl = formEl.querySelector('.status-msg');
+    statusEl.textContent = 'Saving…';
+    try {
+      if (docId) {
+        await updateDoc(doc(db, colName, docId), payload);
+      } else {
+        await addDoc(collection(db, colName), payload);
+      }
+      statusEl.textContent = '✓ Saved';
+      setTimeout(() => loadPanel(colName), 400);
+    } catch (err) {
+      statusEl.textContent = '✗ ' + err.message;
+    }
+  });
+}
+
+// ---- Now panel (single document, not a list) ----
+async function loadNowPanel() {
+  const panel = document.getElementById('panel-now');
+  panel.innerHTML = '<p class="sub">Loading…</p>';
+  const snap = await getDoc(doc(db, 'site', 'now'));
+  const data = snap.exists() ? snap.data() : {};
+
+  const fields = [
+    { key: 'building', label: 'Currently Building' },
+    { key: 'learning', label: 'Learning' },
+    { key: 'seeking', label: 'Seeking' },
+    { key: 'reading', label: 'Reading' },
+    { key: 'lastUpdated', label: 'Last Updated (e.g. "July 2026")' }
+  ];
+  const fieldsHtml = fields.map(f =>
+    `<div class="field"><label>${f.label}</label><input type="text" data-key="${f.key}" value="${escapeHtml(data[f.key] || '')}"></div>`
+  ).join('');
+
+  panel.innerHTML = `<form class="item-form" id="now-form">
+    <h3>Now status panel</h3>
+    ${fieldsHtml}
+    <div class="form-actions"><button type="submit" class="btn-save">Save</button></div>
+    <div class="status-msg"></div>
+  </form>`;
+
+  document.getElementById('now-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {};
+    fields.forEach(f => { payload[f.key] = document.querySelector(`[data-key="${f.key}"]`).value; });
+    const statusEl = document.querySelector('#now-form .status-msg');
+    statusEl.textContent = 'Saving…';
+    try {
+      await setDoc(doc(db, 'site', 'now'), payload);
+      statusEl.textContent = '✓ Saved';
+    } catch (err) {
+      statusEl.textContent = '✗ ' + err.message;
+    }
+  });
+}
+
+function loadAllPanels() {
+  loadNowPanel();
+  loadPanel('experience');
+  loadPanel('projects');
+  loadPanel('certifications');
+  loadPanel('skills');
+}
+</script>
+</body>
+</html>

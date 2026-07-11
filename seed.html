@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seed Database — abrarimtiyaz.in</title>
+<style>
+  body{ font-family: monospace; background:#12140F; color:#ECEAE0; padding: 40px; max-width: 700px; margin: 0 auto; }
+  h1{ color:#E0A05E; }
+  button{ background:#E0A05E; color:#12140F; border:none; padding:14px 24px; font-family:monospace; font-size:15px; border-radius:4px; cursor:pointer; margin-top:20px; }
+  button:disabled{ opacity:0.5; cursor:not-allowed; }
+  #log{ white-space: pre-wrap; background:#1A1D15; border:1px solid #33362A; padding:16px; margin-top:20px; border-radius:4px; font-size:13px; line-height:1.6; max-height:400px; overflow-y:auto; }
+  .warn{ color:#E0A05E; }
+</style>
+</head>
+<body>
+  <h1>⚠ One-time database seed</h1>
+  <p>This populates Firestore with your current site content. Run this <b>once</b>. Running it again will create duplicate entries.</p>
+  <p class="warn">You must be logged in as the admin user for this to work (writes require authentication). Log in via /admin.html first if needed, then come back here.</p>
+  <button id="seed-btn">Seed Database</button>
+  <div id="log"></div>
+
+  <script type="module">
+    import { db, auth, collection, addDoc, setDoc, doc, onAuthStateChanged } from './firebase-config.js';
+
+    const log = document.getElementById('log');
+    const btn = document.getElementById('seed-btn');
+    function print(msg){ log.textContent += msg + '\n'; log.scrollTop = log.scrollHeight; }
+
+    let isLoggedIn = false;
+    onAuthStateChanged(auth, (user) => {
+      isLoggedIn = !!user;
+      if (!isLoggedIn) {
+        print('⚠ Not logged in. Go to /admin.html, log in, then reload this page.');
+        btn.disabled = true;
+      } else {
+        print('✓ Logged in as ' + user.email + '. Ready to seed.');
+      }
+    });
+
+    const experience = [
+      { title: "Winter Intern (Internship cum Training)", org: "National Institute of Technology, Srinagar", date: "Jan – Feb 2025", bullets: [
+        "Built and evaluated Machine Learning models end-to-end, from raw data to interpretable results.",
+        "Applied structured preprocessing and exploratory analysis to improve model input quality.",
+        "Delivered working ML workflows within a short, focused training window."
+      ], order: 1 },
+      { title: "Summer Intern", org: "Indian Institute of Technology, Bombay", date: "Jun 2024", bullets: [
+        "Automated repetitive operational tasks with BASH, reducing manual effort in a live Linux environment.",
+        "Shipped Python scripts for data handling, version-controlled with Git from day one.",
+        "Built strong command-line fluency while directly supporting day-to-day technical operations."
+      ], order: 2 },
+      { title: "B.Tech, Electronics & Communication Engineering", org: "Islamic University of Science and Technology (IUST), Pulwama", date: "2022 – 2026", bullets: [], order: 3 }
+    ];
+
+    const projects = [
+      { title: "Medical Image Segmentation (U-Net)",
+        description: "A deep learning pipeline for segmenting regions of interest in medical scans using a U-Net architecture, built and trained to identify structures within the input images. Wrapped in an interactive Streamlit app so a scan can be uploaded and segmented in real time, right in the browser — no local setup required.",
+        tags: ["Python","PyTorch","U-Net","Streamlit","Deep Learning"],
+        problem: "Manual segmentation of medical scans is slow and inconsistent — this automates the first pass.",
+        features: "Upload a scan, run inference, and view the segmented mask instantly in-browser.",
+        challenges: "Getting a U-Net to generalize well on a limited medical imaging dataset.",
+        learned: "End-to-end deep learning delivery — from model training to a deployed, usable app.",
+        liveUrl: "https://unet-app-rpu4s9tdvinapzfxntz9sr.streamlit.app",
+        githubUrl: "https://github.com/abrarimtiyaz01/Medical-Image-Segmentation",
+        embedUrl: "https://unet-app-rpu4s9tdvinapzfxntz9sr.streamlit.app/?embed=true",
+        order: 1 },
+      { title: "This Portfolio Website",
+        description: "A single-file, self-contained personal site built from scratch — circuit-board visual identity, scroll-driven animations, dark/light theming, and a live contact pipeline, hosted free on GitHub Pages.",
+        tags: ["HTML","CSS","JavaScript","Firebase","GitHub Pages"],
+        problem: "A recruiter-facing home base that reflects both my hardware and software sides.",
+        features: "Theme toggle, animated timeline, embedded live project demo, admin-editable content, and a working contact form.",
+        challenges: "Getting silent form submission working reliably without a backend.",
+        learned: "Vanilla JS animation techniques and how far a single HTML file (plus Firebase) can go.",
+        liveUrl: "https://abrarimtiyaz.in",
+        githubUrl: "",
+        embedUrl: "",
+        order: 2 },
+      { title: "Power Supply cum Mobile Charger",
+        description: "Designed a regulated DC output suitable for mobile charging, with attention to basic safety and stability — a practical circuit-design project bridging electronics theory and a real, usable device.",
+        tags: ["Circuit Design","KiCad","Multisim"],
+        problem: "A compact, reliable regulated supply for everyday mobile charging.",
+        features: "Stable regulated DC output with basic protection built in.",
+        challenges: "Balancing output stability against component cost and size.",
+        learned: "Bridging theoretical circuit design with a real, working device.",
+        liveUrl: "", githubUrl: "", embedUrl: "",
+        order: 3 }
+    ];
+
+    const certifications = [
+      { title: "e-Yantra Online Software Foundation Course", issuer: "IIT Bombay", date: "Jul 2024", type: "Certification", skills: "Linux, Shell Scripting, Regex, SED, AWK", order: 1 },
+      { title: "Python Fundamentals", issuer: "DIGISAKSHAM", date: "Sep 2024", type: "Certification", skills: "Python Programming, Core Concepts", order: 2 },
+      { title: "One-Day 3D Modelling & Printing Workshop", issuer: "CIED–IUST Foundation", date: "Jun 2025", type: "Workshop", skills: "", order: 3 },
+      { title: "Mind Over Matter", issuer: "NIT Srinagar", date: "21–22 Nov 2024", type: "Workshop", skills: "", order: 4 },
+      { title: "AI & ML in Real Life", issuer: "GUVI", date: "27 Dec 2024", type: "Webinar", skills: "", order: 5 },
+      { title: "Master the Art of Data Visualization", issuer: "GUVI", date: "26 Dec 2024", type: "Webinar", skills: "", order: 6 }
+    ];
+
+    const skills = [
+      { category: "Programming", icon: "🐍", name: "Python", desc: "Scripting, automation, data handling, and ML workflows.", pct: 85, order: 1 },
+      { category: "Programming", icon: "🔤", name: "C", desc: "Core language fundamentals from coursework and embedded work.", pct: 60, order: 2 },
+      { category: "Web Development", icon: "🌐", name: "HTML / CSS / JS", desc: "Building and shipping this very portfolio from scratch.", pct: 55, order: 3 },
+      { category: "Web Development", icon: "⚛️", name: "React & Node.js", desc: "Currently learning — next step toward full-stack.", pct: 30, order: 4 },
+      { category: "Machine Learning", icon: "📊", name: "Data Preprocessing", desc: "Cleaning, exploring, and preparing data for models.", pct: 65, order: 5 },
+      { category: "Machine Learning", icon: "🧠", name: "Model Building", desc: "U-Net segmentation model, built and evaluated end-to-end.", pct: 60, order: 6 },
+      { category: "Electronics", icon: "🔌", name: "Circuit Design", desc: "Schematic design, KiCad, and Multisim simulation.", pct: 75, order: 7 },
+      { category: "Electronics", icon: "🔧", name: "Soldering & Prototyping", desc: "Hands-on build of a regulated power supply / charger.", pct: 70, order: 8 },
+      { category: "Tools", icon: "🐧", name: "Linux / BASH", desc: "Daily driver CLI, shell scripting, SED/AWK/Regex.", pct: 80, order: 9 },
+      { category: "Tools", icon: "🔗", name: "Git & GitHub", desc: "Version control across coursework and personal projects.", pct: 75, order: 10 },
+      { category: "Soft Skills", icon: "💬", name: "Communication", desc: "Clear technical writing and presenting to non-technical audiences.", pct: 80, order: 11 },
+      { category: "Soft Skills", icon: "🤝", name: "Team Collaboration", desc: "Worked within a 4-person team on the final-year project.", pct: 80, order: 12 }
+    ];
+
+    const nowStatus = {
+      building: "Medical Image Segmentation Platform",
+      learning: "React + Node.js",
+      seeking: "Entry-level Engineering roles",
+      reading: "Clean Code — Robert C. Martin",
+      lastUpdated: "July 2026"
+    };
+
+    btn.addEventListener('click', async () => {
+      if (!isLoggedIn) { print('⚠ You must be logged in first.'); return; }
+      btn.disabled = true;
+      try {
+        print('Seeding experience...');
+        for (const item of experience) await addDoc(collection(db, 'experience'), item);
+        print('Seeding projects...');
+        for (const item of projects) await addDoc(collection(db, 'projects'), item);
+        print('Seeding certifications...');
+        for (const item of certifications) await addDoc(collection(db, 'certifications'), item);
+        print('Seeding skills...');
+        for (const item of skills) await addDoc(collection(db, 'skills'), item);
+        print('Seeding now-status...');
+        await setDoc(doc(db, 'site', 'now'), nowStatus);
+        print('\n✓ Done! All content seeded. You can now use /admin.html to manage it.');
+      } catch (err) {
+        print('✗ Error: ' + err.message);
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
