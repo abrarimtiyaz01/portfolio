@@ -1303,7 +1303,7 @@
           </a>
         </div>
       </div>
-      <div class="hero-avatar" aria-hidden="false"><img src="profile.png" alt="Abrar Imtiyaz"></div>
+      <div class="hero-avatar" aria-hidden="false"><img src="profile.jpg" alt="Abrar Imtiyaz"></div>
     </div>
   </div>
 </header>
@@ -1362,7 +1362,7 @@
       <span class="sec-title">Now</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="now-panel reveal">
+    <div class="now-panel reveal" id="now-content">
       <div class="now-updated">Last updated: July 2026</div>
       <div class="status-grid">
         <div class="status-item">
@@ -1393,7 +1393,7 @@
       <span class="sec-title">Skills</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="skill-categories reveal stagger">
+    <div class="skill-categories reveal stagger" id="skills-content">
 
       <div class="skill-category">
         <div class="skill-group-label">Programming</div>
@@ -1502,7 +1502,7 @@
       <span class="sec-title">Experience &amp; Education</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="trace reveal">
+    <div class="trace reveal" id="experience-content">
       <div class="trace-item">
         <div class="via"></div>
         <div class="trace-date">JAN – FEB 2025</div>
@@ -1542,7 +1542,7 @@
       <span class="sec-title">Projects</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="projects-list">
+    <div class="projects-list" id="projects-content">
 
       <div class="project-card reveal tilt">
         <div class="project-title">Medical Image Segmentation (U-Net)</div>
@@ -1617,7 +1617,7 @@
       <span class="sec-title">Certifications &amp; Workshops</span>
       <span class="sec-rule"></span>
     </div>
-    <div class="cert-grid reveal stagger">
+    <div class="cert-grid reveal stagger" id="certs-content">
       <div class="cert-card">
         <span class="cert-type">Certification</span>
         <div class="cert-card-title">e-Yantra Online Software Foundation Course</div>
@@ -2061,6 +2061,168 @@
     }
   }
 })();
+</script>
+
+<script type="module">
+import { db, collection, getDocs, getDoc, doc, query, orderBy } from './firebase-config.js';
+
+function esc(str) {
+  return String(str == null ? '' : str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Re-attaches the 3D tilt effect to any newly-added .tilt cards
+function attachTilt(root) {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || !matchMedia('(hover: hover)').matches) return;
+  root.querySelectorAll('.tilt').forEach(card => {
+    if (card.dataset.tiltBound) return;
+    card.dataset.tiltBound = '1';
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `perspective(700px) rotateX(${(-y * 10).toFixed(2)}deg) rotateY(${(x * 10).toFixed(2)}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(700px) rotateX(0deg) rotateY(0deg) translateY(0)';
+    });
+  });
+}
+
+async function loadNow() {
+  try {
+    const snap = await getDoc(doc(db, 'site', 'now'));
+    if (!snap.exists()) return; // keep fallback content
+    const d = snap.data();
+    const el = document.getElementById('now-content');
+    el.innerHTML = `
+      <div class="now-updated">Last updated: ${esc(d.lastUpdated)}</div>
+      <div class="status-grid">
+        <div class="status-item"><span class="status-label">Currently Building</span><span class="status-value">${esc(d.building)}</span></div>
+        <div class="status-item"><span class="status-label">Learning</span><span class="status-value">${esc(d.learning)}</span></div>
+        <div class="status-item"><span class="status-label">Seeking</span><span class="status-value">${esc(d.seeking)}</span></div>
+        <div class="status-item"><span class="status-label">Reading</span><span class="status-value">${esc(d.reading)}</span></div>
+      </div>`;
+  } catch (e) { /* keep fallback content on any error */ }
+}
+
+async function loadSkills() {
+  try {
+    const q = query(collection(db, 'skills'), orderBy('order'));
+    const snap = await getDocs(q);
+    if (snap.empty) return;
+    const byCategory = {};
+    const order = [];
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      if (!byCategory[d.category]) { byCategory[d.category] = []; order.push(d.category); }
+      byCategory[d.category].push(d);
+    });
+    let html = '';
+    order.forEach(cat => {
+      html += `<div class="skill-category"><div class="skill-group-label">${esc(cat)}</div><div class="skill-cards">`;
+      byCategory[cat].forEach(s => {
+        html += `<div class="skill-card">
+          <div class="skill-card-head"><span class="skill-icon">${esc(s.icon)}</span><span class="skill-name">${esc(s.name)}</span></div>
+          <p class="skill-desc">${esc(s.desc)}</p>
+          <span class="bar-track sm"><span class="bar-fill" style="--pct:${esc(s.pct)}%"></span></span>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+    document.getElementById('skills-content').innerHTML = html;
+  } catch (e) { /* keep fallback content */ }
+}
+
+async function loadExperience() {
+  try {
+    const q = query(collection(db, 'experience'), orderBy('order'));
+    const snap = await getDocs(q);
+    if (snap.empty) return;
+    let html = '';
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      const bullets = Array.isArray(d.bullets) ? d.bullets : [];
+      html += `<div class="trace-item">
+        <div class="via"></div>
+        <div class="trace-date">${esc(d.date)}</div>
+        <div class="trace-title">${esc(d.title)}</div>
+        <div class="trace-org">${esc(d.org)}</div>
+        ${bullets.length ? '<ul>' + bullets.map(b => '<li>' + esc(b) + '</li>').join('') + '</ul>' : ''}
+      </div>`;
+    });
+    document.getElementById('experience-content').innerHTML = html;
+  } catch (e) { /* keep fallback content */ }
+}
+
+async function loadProjects() {
+  try {
+    const q = query(collection(db, 'projects'), orderBy('order'));
+    const snap = await getDocs(q);
+    if (snap.empty) return;
+    let html = '';
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      const tags = Array.isArray(d.tags) ? d.tags : [];
+      let links = '';
+      if (d.liveUrl || d.githubUrl) {
+        links = '<div class="project-links">';
+        if (d.liveUrl) links += `<a href="${esc(d.liveUrl)}" target="_blank" rel="noopener">${d.githubUrl ? 'Open live app ↗' : 'View live site ↗'}</a>`;
+        if (d.githubUrl) links += `<a href="${esc(d.githubUrl)}" target="_blank" rel="noopener">View source on GitHub ↗</a>`;
+        links += '</div>';
+      }
+      let embed = '';
+      if (d.embedUrl) {
+        embed = `<div class="project-embed-wrap">
+          <div class="project-embed-label"><span class="live-dot"></span> Live app embedded below — try it directly</div>
+          <iframe src="${esc(d.embedUrl)}" loading="lazy" title="${esc(d.title)} live app" allow="clipboard-write"></iframe>
+        </div>`;
+      }
+      html += `<div class="project-card reveal tilt">
+        <div class="project-title">${esc(d.title)}</div>
+        <p class="project-desc">${esc(d.description)}</p>
+        <div class="project-tags">${tags.map(t => '<span class="chip">' + esc(t) + '</span>').join('')}</div>
+        <div class="project-detail-grid">
+          <div class="pd-block"><span class="pd-label">Problem Solved</span>${esc(d.problem)}</div>
+          <div class="pd-block"><span class="pd-label">Features</span>${esc(d.features)}</div>
+          <div class="pd-block"><span class="pd-label">Challenges</span>${esc(d.challenges)}</div>
+          <div class="pd-block"><span class="pd-label">What I Learned</span>${esc(d.learned)}</div>
+        </div>
+        ${links}
+        ${embed}
+      </div>`;
+    });
+    const container = document.getElementById('projects-content');
+    container.innerHTML = html;
+    attachTilt(container);
+  } catch (e) { /* keep fallback content */ }
+}
+
+async function loadCertifications() {
+  try {
+    const q = query(collection(db, 'certifications'), orderBy('order'));
+    const snap = await getDocs(q);
+    if (snap.empty) return;
+    let html = '';
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      html += `<div class="cert-card">
+        <span class="cert-type">${esc(d.type)}</span>
+        <div class="cert-card-title">${esc(d.title)}</div>
+        <div class="cert-card-issuer">${esc(d.issuer)}</div>
+        <div class="cert-card-date">${esc(d.date)}</div>
+        ${d.skills ? '<div class="cert-card-skills">' + esc(d.skills) + '</div>' : ''}
+      </div>`;
+    });
+    document.getElementById('certs-content').innerHTML = html;
+  } catch (e) { /* keep fallback content */ }
+}
+
+loadNow();
+loadSkills();
+loadExperience();
+loadProjects();
+loadCertifications();
 </script>
 
 </body>
