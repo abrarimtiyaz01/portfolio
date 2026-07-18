@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fix Certificate Paths — abrarimtiyaz.in</title>
+<style>
+  body{ font-family: monospace; background:#12140F; color:#ECEAE0; padding: 40px; max-width: 700px; margin: 0 auto; }
+  h1{ color:#E0A05E; }
+  button{ background:#E0A05E; color:#12140F; border:none; padding:14px 24px; font-family:monospace; font-size:15px; border-radius:4px; cursor:pointer; margin-top:20px; }
+  button:disabled{ opacity:0.5; cursor:not-allowed; }
+  #log{ white-space: pre-wrap; background:#1A1D15; border:1px solid #33362A; padding:16px; margin-top:20px; border-radius:4px; font-size:13px; line-height:1.6; }
+  .warn{ color:#E0A05E; }
+</style>
+</head>
+<body>
+  <h1>⚠ One-time fix: certificate paths</h1>
+  <p>Your certificate images ended up in your repo's root folder instead of a certs/ subfolder. This removes the "certs/" prefix from your existing Firestore certification entries to match. Run this <b>once</b>.</p>
+  <p class="warn">You must be logged in via /admin.html first.</p>
+  <button id="fix-btn">Fix Certificate Paths</button>
+  <div id="log"></div>
+
+  <script type="module">
+    import { db, auth, collection, getDocs, updateDoc, doc, onAuthStateChanged } from './firebase-config.js';
+
+    const log = document.getElementById('log');
+    const btn = document.getElementById('fix-btn');
+    function print(msg){ log.textContent += msg + '\n'; }
+
+    let isLoggedIn = false;
+    onAuthStateChanged(auth, (user) => {
+      isLoggedIn = !!user;
+      if (!isLoggedIn) {
+        print('⚠ Not logged in. Go to /admin.html, log in, then reload this page.');
+        btn.disabled = true;
+      } else {
+        print('✓ Logged in as ' + user.email + '. Ready to fix.');
+      }
+    });
+
+    btn.addEventListener('click', async () => {
+      if (!isLoggedIn) { print('⚠ You must be logged in first.'); return; }
+      btn.disabled = true;
+      try {
+        const snap = await getDocs(collection(db, 'certifications'));
+        let fixed = 0;
+        for (const docSnap of snap.docs) {
+          const data = docSnap.data();
+          if (data.certificateUrl && data.certificateUrl.startsWith('certs/')) {
+            const newUrl = data.certificateUrl.replace('certs/', '');
+            await updateDoc(doc(db, 'certifications', docSnap.id), { certificateUrl: newUrl });
+            print('Fixed: ' + data.title + ' → ' + newUrl);
+            fixed++;
+          }
+        }
+        print('\n✓ Done! Fixed ' + fixed + ' entries.');
+      } catch (err) {
+        print('✗ Error: ' + err.message);
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
