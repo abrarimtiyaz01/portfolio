@@ -23,10 +23,11 @@ const app = initializeApp(firebaseConfig);
 
 // experimentalAutoDetectLongPolling: works around Safari's tracking prevention
 // and ad-blockers that silently break Firestore's default WebChannel connection.
+// Third argument "default" targets the actual named database (not the implicit "(default)").
 export const db = initializeFirestore(app, {
   experimentalAutoDetectLongPolling: true,
   useFetchStreams: false
-});
+}, "default");
 export const auth = getAuth(app);
 
 export {
