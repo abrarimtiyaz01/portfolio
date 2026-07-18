@@ -1063,9 +1063,29 @@
     border: 1px solid var(--line);
     border-radius: 6px;
     padding: 16px;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
   }
-  .cert-card:hover{ border-color: var(--copper); transform: translateY(-3px); }
+  a.cert-card{ cursor: pointer; }
+  .cert-card:hover{ border-color: var(--copper); transform: translateY(-3px); text-decoration: none; }
+  a.cert-card:hover{ box-shadow: 0 12px 28px rgba(0,0,0,0.3); }
+  .cert-view-hint{
+    display: none;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--copper-bright);
+    margin-top: 10px;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  a.cert-card .cert-view-hint{ display: flex; }
+  a.cert-card:hover .cert-view-hint{ opacity: 1; transform: translateY(0); }
   .cert-type{
     display: inline-block;
     font-family: var(--mono);
@@ -1298,7 +1318,7 @@
           <a class="social-icon magnetic" href="mailto:abrarimtiyaz01@gmail.com" aria-label="Send email">
             <svg viewBox="0 0 24 24"><path d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 18.5v-13zm2.2.3 7.3 5.8a.8.8 0 0 0 1 0l7.3-5.8a.6.6 0 0 0-.4-1H4.6a.6.6 0 0 0-.4 1z"/></svg>
           </a>
-          <a class="social-icon magnetic" href="Abrar_Imtiyaz_CV.pdf" download aria-label="Download resume">
+          <a class="social-icon magnetic" href="resume.pdf" download aria-label="Download resume">
             <svg viewBox="0 0 24 24"><path d="M12 2a1 1 0 0 1 1 1v10.59l3.29-3.3a1 1 0 1 1 1.42 1.42l-5 5a1 1 0 0 1-1.42 0l-5-5a1 1 0 1 1 1.42-1.42L11 13.59V3a1 1 0 0 1 1-1zM4 19a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg>
           </a>
         </div>
@@ -1564,10 +1584,6 @@
           <a href="https://unet-app-rpu4s9tdvinapzfxntz9sr.streamlit.app" target="_blank" rel="noopener">Open live app ↗</a>
           <a href="https://github.com/abrarimtiyaz01/Medical-Image-Segmentation" target="_blank" rel="noopener">View source on GitHub ↗</a>
         </div>
-        <div class="project-embed-wrap">
-          <div class="project-embed-label"><span class="live-dot"></span> Live app embedded below — try it directly</div>
-          <iframe src="https://unet-app-rpu4s9tdvinapzfxntz9sr.streamlit.app/?embed=true" loading="lazy" title="Medical Image Segmentation live app" allow="clipboard-write"></iframe>
-        </div>
       </div>
 
       <div class="project-card reveal tilt">
@@ -1618,44 +1634,56 @@
       <span class="sec-rule"></span>
     </div>
     <div class="cert-grid reveal stagger" id="certs-content">
-      <div class="cert-card">
+      <a class="cert-card" href="certs/eyantra.jpg" target="_blank" rel="noopener">
         <span class="cert-type">Certification</span>
         <div class="cert-card-title">e-Yantra Online Software Foundation Course</div>
         <div class="cert-card-issuer">IIT Bombay</div>
         <div class="cert-card-date">Jul 2024</div>
         <div class="cert-card-skills">Linux, Shell Scripting, Regex, SED, AWK</div>
-      </div>
-      <div class="cert-card">
+        <div class="cert-view-hint">View Certificate ↗</div>
+      </a>
+      <a class="cert-card" href="certs/python-fundamentals.jpg" target="_blank" rel="noopener">
         <span class="cert-type">Certification</span>
         <div class="cert-card-title">Python Fundamentals</div>
         <div class="cert-card-issuer">DIGISAKSHAM</div>
         <div class="cert-card-date">Sep 2024</div>
         <div class="cert-card-skills">Python Programming, Core Concepts</div>
-      </div>
+        <div class="cert-view-hint">View Certificate ↗</div>
+      </a>
+      <a class="cert-card" href="certs/nit-internship-ml-ai.jpg" target="_blank" rel="noopener">
+        <span class="cert-type">Certification</span>
+        <div class="cert-card-title">Internship cum Training — Machine Learning &amp; AI</div>
+        <div class="cert-card-issuer">NIT Srinagar</div>
+        <div class="cert-card-date">Jan – Feb 2025</div>
+        <div class="cert-view-hint">View Certificate ↗</div>
+      </a>
       <div class="cert-card">
         <span class="cert-type">Workshop</span>
         <div class="cert-card-title">One-Day 3D Modelling &amp; Printing Workshop</div>
         <div class="cert-card-issuer">CIED–IUST Foundation</div>
         <div class="cert-card-date">Jun 2025</div>
       </div>
-      <div class="cert-card">
+      <a class="cert-card" href="certs/mind-over-matter.jpg" target="_blank" rel="noopener">
         <span class="cert-type">Workshop</span>
         <div class="cert-card-title">Mind Over Matter</div>
         <div class="cert-card-issuer">NIT Srinagar</div>
         <div class="cert-card-date">21–22 Nov 2024</div>
-      </div>
-      <div class="cert-card">
+        <div class="cert-view-hint">View Certificate ↗</div>
+      </a>
+      <a class="cert-card" href="certs/ai-ml-real-life.jpg" target="_blank" rel="noopener">
         <span class="cert-type">Webinar</span>
         <div class="cert-card-title">AI &amp; ML in Real Life</div>
         <div class="cert-card-issuer">GUVI</div>
         <div class="cert-card-date">27 Dec 2024</div>
-      </div>
-      <div class="cert-card">
+        <div class="cert-view-hint">View Certificate ↗</div>
+      </a>
+      <a class="cert-card" href="certs/data-visualization.jpg" target="_blank" rel="noopener">
         <span class="cert-type">Webinar</span>
         <div class="cert-card-title">Master the Art of Data Visualization</div>
         <div class="cert-card-issuer">GUVI</div>
         <div class="cert-card-date">26 Dec 2024</div>
-      </div>
+        <div class="cert-view-hint">View Certificate ↗</div>
+      </a>
     </div>
   </div>
 </section>
@@ -2171,13 +2199,6 @@ async function loadProjects() {
         if (d.githubUrl) links += `<a href="${esc(d.githubUrl)}" target="_blank" rel="noopener">View source on GitHub ↗</a>`;
         links += '</div>';
       }
-      let embed = '';
-      if (d.embedUrl) {
-        embed = `<div class="project-embed-wrap">
-          <div class="project-embed-label"><span class="live-dot"></span> Live app embedded below — try it directly</div>
-          <iframe src="${esc(d.embedUrl)}" loading="lazy" title="${esc(d.title)} live app" allow="clipboard-write"></iframe>
-        </div>`;
-      }
       html += `<div class="project-card reveal tilt">
         <div class="project-title">${esc(d.title)}</div>
         <p class="project-desc">${esc(d.description)}</p>
@@ -2189,7 +2210,6 @@ async function loadProjects() {
           <div class="pd-block"><span class="pd-label">What I Learned</span>${esc(d.learned)}</div>
         </div>
         ${links}
-        ${embed}
       </div>`;
     });
     const container = document.getElementById('projects-content');
@@ -2206,13 +2226,16 @@ async function loadCertifications() {
     let html = '';
     snap.forEach(docSnap => {
       const d = docSnap.data();
-      html += `<div class="cert-card">
+      const tag = d.certificateUrl ? 'a' : 'div';
+      const linkAttrs = d.certificateUrl ? `href="${esc(d.certificateUrl)}" target="_blank" rel="noopener"` : '';
+      html += `<${tag} class="cert-card" ${linkAttrs}>
         <span class="cert-type">${esc(d.type)}</span>
         <div class="cert-card-title">${esc(d.title)}</div>
         <div class="cert-card-issuer">${esc(d.issuer)}</div>
         <div class="cert-card-date">${esc(d.date)}</div>
         ${d.skills ? '<div class="cert-card-skills">' + esc(d.skills) + '</div>' : ''}
-      </div>`;
+        ${d.certificateUrl ? '<div class="cert-view-hint">View Certificate ↗</div>' : ''}
+      </${tag}>`;
     });
     document.getElementById('certs-content').innerHTML = html;
   } catch (e) { /* keep fallback content */ }

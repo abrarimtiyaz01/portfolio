@@ -160,7 +160,6 @@ const schemas = {
       { key: 'learned', label: 'What I Learned', type: 'textarea' },
       { key: 'liveUrl', label: 'Live URL', type: 'text' },
       { key: 'githubUrl', label: 'GitHub URL', type: 'text' },
-      { key: 'embedUrl', label: 'Embed URL (optional, for iframe)', type: 'text' },
       { key: 'order', label: 'Order (lower = first)', type: 'number' }
     ],
     display: (d) => ({ title: d.title, sub: (d.tags || []).join(', ') })
@@ -172,6 +171,7 @@ const schemas = {
       { key: 'date', label: 'Date', type: 'text' },
       { key: 'type', label: 'Type', type: 'select', options: ['Certification', 'Workshop', 'Webinar'] },
       { key: 'skills', label: 'Skills learned (optional)', type: 'text' },
+      { key: 'certificateUrl', label: 'Certificate file path (e.g. certs/myfile.jpg — upload the file to your GitHub repo first)', type: 'text' },
       { key: 'order', label: 'Order (lower = first)', type: 'number' }
     ],
     display: (d) => ({ title: d.title, sub: d.issuer + ' · ' + d.date })
