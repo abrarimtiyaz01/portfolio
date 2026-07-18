@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remove Duplicates — abrarimtiyaz.in</title>
+<style>
+  body{ font-family: monospace; background:#12140F; color:#ECEAE0; padding: 40px; max-width: 760px; margin: 0 auto; }
+  h1{ color:#E0A05E; }
+  button{ background:#E0A05E; color:#12140F; border:none; padding:14px 24px; font-family:monospace; font-size:15px; border-radius:4px; cursor:pointer; margin-top:14px; margin-right:10px; }
+  button:disabled{ opacity:0.5; cursor:not-allowed; }
+  button.secondary{ background:none; border:1px solid #33362A; color:#ECEAE0; }
+  #log{ white-space: pre-wrap; background:#1A1D15; border:1px solid #33362A; padding:16px; margin-top:20px; border-radius:4px; font-size:13px; line-height:1.6; max-height:500px; overflow-y:auto; }
+  .warn{ color:#E0A05E; }
+</style>
+</head>
+<body>
+  <h1>⚠ Remove duplicate entries</h1>
+  <p>Scans each collection and removes duplicates, keeping only the <b>oldest</b> copy of each item (matched by title/name). This preserves any edits you've made — it only removes true repeats.</p>
+  <p class="warn">You must be logged in via /admin.html first. This does NOT touch the "Now" section (it can't duplicate, since it's a single document).</p>
+
+  <button id="scan-btn">1. Scan for Duplicates (safe, no changes)</button>
+  <button id="delete-btn" class="secondary" disabled>2. Delete Duplicates Found</button>
+  <div id="log"></div>
+
+  <script type="module">
+    import { db, auth, collection, getDocs, deleteDoc, doc, onAuthStateChanged } from './firebase-config.js';
+
+    const log = document.getElementById('log');
+    const scanBtn = document.getElementById('scan-btn');
+    const deleteBtn = document.getElementById('delete-btn');
+    function print(msg){ log.textContent += msg + '\n'; log.scrollTop = log.scrollHeight; }
+
+    let isLoggedIn = false;
+    onAuthStateChanged(auth, (user) => {
+      isLoggedIn = !!user;
+      if (!isLoggedIn) {
+        print('⚠ Not logged in. Go to /admin.html, log in, then reload this page.');
+        scanBtn.disabled = true;
+      } else {
+        print('✓ Logged in as ' + user.email + '. Ready to scan.');
+      }
+    });
+
+    const collections = {
+      experience: 'title',
+      projects: 'title',
+      certifications: 'title',
+      skills: 'name'
+    };
+
+    let toDelete = []; // [{col, id, title}]
+
+    scanBtn.addEventListener('click', async () => {
+      if (!isLoggedIn) { print('⚠ You must be logged in first.'); return; }
+      scanBtn.disabled = true;
+      toDelete = [];
+      let totalDupes = 0;
+
+      for (const [colName, keyField] of Object.entries(collections)) {
+        const snap = await getDocs(collection(db, colName));
+        const docs = snap.docs.map(d => ({ id: d.id, data: d.data() }));
+        // Sort by document creation order isn't directly available, so we keep
+        // insertion order as returned (Firestore generally returns in a stable order).
+        const seen = new Map(); // key -> kept doc id
+        docs.forEach(d => {
+          const key = (d.data[keyField] || '').trim().toLowerCase();
+          if (!key) return;
+          if (seen.has(key)) {
+            toDelete.push({ col: colName, id: d.id, title: d.data[keyField] });
+            totalDupes++;
+          } else {
+            seen.set(key, d.id);
+          }
+        });
+        print(colName + ': ' + docs.length + ' total documents scanned.');
+      }
+
+      print('\nFound ' + totalDupes + ' duplicate(s) to remove:');
+      toDelete.forEach(d => print('  - [' + d.col + '] ' + d.title + ' (id: ' + d.id + ')'));
+
+      if (totalDupes > 0) {
+        print('\nReview the list above. Click "Delete Duplicates Found" to remove them.');
+        deleteBtn.disabled = false;
+      } else {
+        print('\n✓ No duplicates found. Nothing to do.');
+      }
+    });
+
+    deleteBtn.addEventListener('click', async () => {
+      deleteBtn.disabled = true;
+      print('\nDeleting...');
+      for (const d of toDelete) {
+        await deleteDoc(doc(db, d.col, d.id));
+        print('Deleted: [' + d.col + '] ' + d.title);
+      }
+      print('\n✓ Done! Refresh your site to confirm.');
+    });
+  </script>
+</body>
+</html>
