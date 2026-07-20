@@ -2301,6 +2301,9 @@ async function loadProjects() {
     });
     const container = document.getElementById('projects-content');
     container.innerHTML = html;
+    // These cards are rendered after the page-level reveal observer has run.
+    // Make them visible immediately instead of leaving them in the hidden state.
+    container.querySelectorAll('.reveal').forEach(card => card.classList.add('in-view'));
     attachTilt(container);
   } catch (e) { /* keep fallback content */ }
 }
