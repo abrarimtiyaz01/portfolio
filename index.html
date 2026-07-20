@@ -1353,6 +1353,58 @@
     section{ padding:72px 0; }
     .project-card{ padding:24px; }
   }
+
+  /* ---------- BENTO LAYOUT ---------- */
+  .hero-layout{
+    display:grid;
+    grid-template-columns:minmax(0, 1.2fr) minmax(320px, .8fr);
+    gap:clamp(40px, 8vw, 110px);
+    align-items:center;
+  }
+  .hero-intro{ max-width:720px; }
+  .hero-kicker{
+    margin:0 0 16px; color:var(--muted); font:600 11px var(--mono);
+    letter-spacing:.13em;
+  }
+  .hero-layout h1.name{ max-width:720px; font-size:clamp(54px, 7vw, 94px); line-height:.92; }
+  .hero-layout h1.name span{ display:inline; }
+  .hero-dashboard{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:end;
+    padding:14px; border:1px solid var(--line); border-radius:26px;
+    background:linear-gradient(145deg, rgba(24,37,70,.9), rgba(11,17,32,.9));
+    box-shadow:0 26px 70px rgba(0,0,0,.28);
+  }
+  .hero-dashboard .hero-avatar{
+    grid-column:1 / -1; width:100%; height:320px; margin:0; border:0;
+    border-radius:17px; box-shadow:none; transform:none;
+  }
+  .hero-dashboard .hero-avatar::after{ right:12px; bottom:12px; }
+  .dashboard-card{
+    min-height:92px; padding:15px; border:1px solid var(--line); border-radius:14px;
+    background:rgba(8,11,20,.5); display:flex; flex-direction:column; justify-content:space-between; gap:9px;
+  }
+  .dashboard-card span{ color:var(--muted); font:500 10px var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+  .dashboard-card strong{ color:var(--text); font-size:14px; line-height:1.35; }
+  .dashboard-primary{ grid-column:1 / -1; min-height:auto; border-color:rgba(94,234,212,.3); }
+  .dashboard-primary strong{ color:var(--sage); font-size:16px; }
+  .dashboard-grid{ display:contents; }
+  .projects-list{
+    display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:18px;
+  }
+  .projects-list .project-card{ margin:0; height:100%; }
+  .projects-list .project-card:first-child{ grid-column:1 / -1; }
+  .projects-list .project-card:first-child .project-detail-grid{ grid-template-columns:repeat(4, 1fr); }
+  .cert-grid{ grid-template-columns:repeat(3, 1fr); }
+  .skill-cards{ grid-template-columns:repeat(3, 1fr); }
+  @media (max-width:760px){
+    .hero-layout{ grid-template-columns:1fr; gap:32px; }
+    .hero-dashboard{ order:-1; grid-template-columns:1fr 1fr; }
+    .hero-dashboard .hero-avatar{ height:245px; }
+    .hero-layout h1.name{ font-size:52px; }
+    .projects-list, .cert-grid, .skill-cards{ grid-template-columns:1fr; }
+    .projects-list .project-card:first-child{ grid-column:auto; }
+    .projects-list .project-card:first-child .project-detail-grid{ grid-template-columns:1fr; }
+  }
 </style>
 <!-- Cloudflare Web Analytics -->
 <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "856f76483c5842399178e0147b0731cf"}'></script>
@@ -1418,11 +1470,12 @@
 <main id="main-content">
 <header class="hero">
   <div class="wrap">
-    <div class="hero-grid">
-      <div>
+    <div class="hero-layout">
+      <div class="hero-intro">
         <div class="eyebrow">🟢 OPEN TO ENTRY-LEVEL ENGINEERING ROLES</div>
-        <h1 class="name" id="hero-name">ABRAR<br><span>IMTIYAZ</span></h1>
-        <p class="headline">Entry-level software engineer building with Python, Linux, applied ML, and electronics.</p>
+        <p class="hero-kicker">ABRAR IMTIYAZ / PORTFOLIO 2026</p>
+        <h1 class="name">I build <span>useful</span><br>technical systems.</h1>
+        <p class="headline">A final-year ECE student working at the intersection of software, machine learning, and electronics.</p>
         <div class="role-cycle" id="role-cycle"><span id="rc-text"></span><span class="rc-cursor"></span></div>
         <p class="role-line" id="role-line"><span id="type-target"></span><span class="type-cursor">&nbsp;</span></p>
         <div class="hero-meta">
@@ -1447,7 +1500,17 @@
           </a>
         </div>
       </div>
-      <div class="hero-avatar" aria-hidden="false"><img src="profile.jpg" alt="Abrar Imtiyaz"></div>
+      <aside class="hero-dashboard" aria-label="Profile summary">
+        <div class="hero-avatar"><img src="profile.jpg" alt="Abrar Imtiyaz"></div>
+        <div class="dashboard-card dashboard-primary">
+          <span>Current focus</span>
+          <strong>Python · Linux · Applied ML</strong>
+        </div>
+        <div class="dashboard-grid">
+          <div class="dashboard-card"><span>Based in</span><strong>J&amp;K, India</strong></div>
+          <div class="dashboard-card"><span>Availability</span><strong>Open now</strong></div>
+        </div>
+      </aside>
     </div>
   </div>
 </header>
