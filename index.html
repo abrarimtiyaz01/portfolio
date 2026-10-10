@@ -2251,5 +2251,40 @@ loadProjects();
 loadCertifications();
 </script>
 
+<script>
+/* KhataSync project card: survives the Firestore projects reload */
+(function(){
+  var container = document.getElementById('projects-content');
+  if (!container) return;
+
+  function addCard(){
+    if (container.querySelector('[data-khatasync]')) return;
+    var card = document.createElement('div');
+    card.className = 'project-card reveal in-view';
+    card.setAttribute('data-khatasync', '1');
+    card.innerHTML =
+      '<div class="project-title">KhataSync — Digital Ledger for Shops</div>' +
+      '<p class="project-desc">A mobile-first ledger app for small retailers and distributors that tracks what customers owe and what the shop owes suppliers in one place. Includes per-user signup and login, a confirm/dispute status on every entry, part-payment tracking, WhatsApp reminders, and CSV export. Currently a test build for field-testing with real shopkeepers.</p>' +
+      '<div class="project-tags"><span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JavaScript</span><span class="chip">GitHub Pages</span></div>' +
+      '<div class="project-detail-grid">' +
+        '<div class="pd-block"><span class="pd-label">Problem Solved</span>Shops and suppliers each use different khata apps, so dues and balances are scattered and often don\'t match.</div>' +
+        '<div class="pd-block"><span class="pd-label">Features</span>Customer and supplier views from one ledger, confirm/dispute flow, WhatsApp reminders, per-user data on the device.</div>' +
+        '<div class="pd-block"><span class="pd-label">Challenges</span>Other ledger apps have no open APIs, so the design focuses on a shared confirmation flow instead of integrations.</div>' +
+        '<div class="pd-block"><span class="pd-label">What I Learned</span>Validating a product idea quickly with a no-backend prototype before investing in infrastructure.</div>' +
+      '</div>' +
+      '<div class="project-links"><a href="khatasync/" target="_blank" rel="noopener">Open live app ↗</a></div>';
+    container.appendChild(card);
+  }
+
+  addCard();
+  // Firestore replaces the cards after load, so re-add ours if it disappears
+  new MutationObserver(addCard).observe(container, { childList: true });
+
+  // Projects Built counter: 3 -> 4
+  var stat = document.querySelector('.stat-num[data-count="3"]');
+  if (stat) stat.setAttribute('data-count', '4');
+})();
+</script>
+
 </body>
 </html>
